@@ -19,6 +19,7 @@ app.get('/health', function(req,res){
 app.get('/events',function(req,res){
     events.push(exampleEvent);
     res.send(JSON.stringify(events));
+    console.log("Sent events... " + events.length);
 });
 
 app.get('/createEvent/:ort/:uhrzeit/:datum',function(req,res){
