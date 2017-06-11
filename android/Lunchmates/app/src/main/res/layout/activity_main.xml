@@ -6,13 +6,59 @@
     android:layout_height="match_parent"
     tools:context="club.lunchmates.lunchmates.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <GridLayout
+        android:layout_width="374dp"
+        android:layout_height="493dp"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="2dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addEventButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_menu_add"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="129dp" />
+
+        <TextView
+            android:id="@+id/startingNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="247dp" />
+
+        <TextView
+            android:id="@+id/nearbyDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_row="13"
+            android:text="currently nearby"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="230dp" />
+
+        <TextView
+            android:id="@+id/startingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="7"
+            android:layout_row="1"
+            android:text="starting in 10 minutes"
+            tools:layout_editor_absoluteX="98dp"
+            tools:layout_editor_absoluteY="296dp" />
+
+        <TextView
+            android:id="@+id/nearbyNumber"
+            android:layout_width="19dp"
+            android:layout_height="24dp"
+            android:layout_column="3"
+            android:layout_row="2"
+            android:text="0"
+            tools:layout_editor_absoluteX="35dp"
+            tools:layout_editor_absoluteY="153dp" />
+    </GridLayout>
 
 </android.support.constraint.ConstraintLayout>
