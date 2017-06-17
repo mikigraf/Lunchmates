@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "70361249172",
+    "firebase_url": "https://lunchmates-ddd8f.firebaseio.com",
+    "project_id": "lunchmates-ddd8f",
+    "storage_bucket": "lunchmates-ddd8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70361249172:android:d96051959baa9ff9",
+        "android_client_info": {
+          "package_name": "club.lunchmates.lunchmates"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70361249172-7krpfo40fg2qeb41slsv3fljes8auigo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "club.lunchmates.lunchmates",
+            "certificate_hash": "147b2d4b81622457f2136dd082c0f85054d2371d"
+          }
+        },
+        {
+          "client_id": "70361249172-8btj4vpnm9f2coia2pv7e3idofftrucr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAli_I4dLJgZR5LOuS0AuE2dvr_NWFmpFs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70361249172-8btj4vpnm9f2coia2pv7e3idofftrucr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
