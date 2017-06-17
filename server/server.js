@@ -1,7 +1,9 @@
 var express = require('express');
 var app = express();
 var http = require('http');
+var firebase = require("./firebase.js");
 
+firebase.initFirebase();
 
 var exampleEvent = {
     'eventId':1,
@@ -33,7 +35,31 @@ app.get('/createEvent/:ort/:uhrzeit/:datum',function(req,res){
     res.send(JSON.stringify(events));
 });
 
+/**
+ * Sends a notification to a device with the given token
+ */
+app.put('/sendNotification/:token/:message', function (req, res) {
+    // TODO: Remove, this is for testing
+    var payload = {
+        notification: {
+            title: "Test",
+            body: req.params.message
+        }
+    };
 
+    firebase.sendNotification(req.params.token, payload);
+    res.json({status: 200});
+});
+
+/**
+ * Updates the firebase token for the user with the given id
+ */
+app.put('/user/updateToken/:id/:token', function (req, res) {
+    var id = req.params.id;
+    var token = req.params.token;
+
+    // TODO: update user in database
+});
 
 var server = app.listen(9999,'127.0.0.1',function(){
     var host = server.address().address;
