@@ -2,8 +2,15 @@ package club.lunchmates.lunchmates;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
+import java.util.List;
+
+import club.lunchmates.lunchmates.data.Event;
+import club.lunchmates.lunchmates.data.Position;
+import club.lunchmates.lunchmates.rest.RestHelperImpl;
+import club.lunchmates.lunchmates.rest.interfaces.RestHelper;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +22,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView t = (TextView) findViewById(R.id.nearbyNumber);
-        new RetrieveEventsTask(t).execute(getAbsoluteUrl("events"));
+        //new RetrieveEventsTask(t).execute(getAbsoluteUrl("events"));
+        RestHelper helper = new RestHelperImpl();
+
+        RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
+            @Override
+            public void onDataReceived(List<Event> data) {
+                if(data != null) {
+                    for(Event e : data) {
+                        Log.i("MainActivity", "Event " + e.getName() + " " + e.getX() + " " + e.getY());
+                    }
+                }
+            }
+        };
+        helper.eventGetAll(listener);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
