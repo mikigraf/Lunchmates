@@ -19,16 +19,17 @@
     <id>UMLClass</id>
     <coordinates>
       <x>710</x>
-      <y>390</y>
+      <y>370</y>
       <w>150</w>
-      <h>100</h>
+      <h>110</h>
     </coordinates>
     <panel_attributes>Event
 --
 id: int {id}
 name: String
 x: String
-y: String</panel_attributes>
+y: String
+date: Date</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -88,19 +89,5 @@ m1=1
 m2=*
 r1=user</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;170.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>490</x>
-      <y>480</y>
-      <w>340</w>
-      <h>220</h>
-    </coordinates>
-    <panel_attributes>lt=-
-m1=1
-m2=*
-r1=event</panel_attributes>
-    <additional_attributes>290.0;10.0;290.0;190.0;10.0;190.0</additional_attributes>
   </element>
 </diagram>
