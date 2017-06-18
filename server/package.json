@@ -19,6 +19,7 @@
   "homepage": "https://github.com/spejss/Lunchmates#readme",
   "dependencies": {
     "express": "^4.15.3",
-    "firebase-admin": "^5.0.0"
+    "firebase-admin": "^5.0.0",
+    "mysql": "^2.13.0"
   }
 }
