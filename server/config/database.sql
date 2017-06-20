@@ -22,7 +22,10 @@ CREATE INDEX Positions_user_fk ON Positions (user);
 CREATE TABLE Users
 (
     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    token VARCHAR(255)
+    token VARCHAR(255),
+    session_token VARCHAR(255),
+    name VARCHAR(50),
+    email VARCHAR(100)
 );
 CREATE TABLE UsersEvents
 (
