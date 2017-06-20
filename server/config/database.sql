@@ -1,3 +1,8 @@
+CREATE TABLE Users
+(
+    id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    token VARCHAR(255)
+);
 CREATE TABLE Events
 (
     name VARCHAR(100),
@@ -19,11 +24,6 @@ CREATE TABLE Positions
     CONSTRAINT Positions_user_fk FOREIGN KEY (user) REFERENCES Users (id)
 );
 CREATE INDEX Positions_user_fk ON Positions (user);
-CREATE TABLE Users
-(
-    id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    token VARCHAR(255)
-);
 CREATE TABLE UsersEvents
 (
     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
