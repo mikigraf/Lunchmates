@@ -82,8 +82,20 @@ exports.userGetEvents = function (user, callback) {
 };
 
 exports.userGetById = function (id, callback) {
-    con.query("SELECT * FROM Users WHERE id = ?;", [id], function (err, result) {
+    con.query("SELECT id, name, email FROM Users WHERE id = ?;", [id], function (err, result) {
         callback(err, result);
+    });
+};
+
+exports.userPpdateSessionToken = function (id, sessionToken, callback) {
+    con.query("UPDATE Users SET session_token = ? WHERE id = ?;", [sessionToken, id], function (err, result) {
+        callback(err, result);
+    });
+};
+
+exports.userAdd = function (name, email, token, sessionToken, callback) {
+    con.query("INSERT INTO Users (name, email, token, session_token) VALUES(?, ?, ?, ?);", [name, email, token, sessionToken], function (err, data) {
+        callback(err, data);
     });
 };
 
