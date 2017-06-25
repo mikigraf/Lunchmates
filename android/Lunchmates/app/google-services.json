@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "70361249172-emlp5djc683ris692h4d9666n2jkej4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "club.lunchmates.lunchmates",
+            "certificate_hash": "35983799b1b75a96b3e00178abaa2100bb55aa2a"
+          }
+        },
+        {
           "client_id": "70361249172-7krpfo40fg2qeb41slsv3fljes8auigo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
