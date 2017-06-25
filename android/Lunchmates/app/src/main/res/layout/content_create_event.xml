@@ -8,4 +8,107 @@
     tools:context="club.lunchmates.lunchmates.CreateEventActivity"
     tools:showIn="@layout/activity_create_event">
 
+    <TableLayout
+        android:id="@+id/event_inputs_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:layout_weight="0.3">
+
+            <EditText
+                android:id="@+id/text_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/black"
+                android:drawableLeft="@drawable/ic_add_location_black_24dp"
+                android:hapticFeedbackEnabled="true"
+                android:inputType="text"
+                android:paddingRight="24dp"
+                android:text="@string/create_event_text_location"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textCursorDrawable="@null"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3">
+
+            <EditText
+                android:id="@+id/text_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/black"
+                android:drawableLeft="@drawable/ic_time_black_24dp"
+                android:editable="false"
+                android:ems="10"
+                android:hapticFeedbackEnabled="true"
+                android:inputType="time"
+                android:paddingRight="24dp"
+                android:text="@string/create_event_text_time"
+                android:textAlignment="center"
+                android:textColor="@android:color/black" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3">
+
+            <!--DatePicker
+                android:id="@+id/datePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" /-->
+            <EditText
+                android:id="@+id/text_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/black"
+                android:drawableLeft="@drawable/ic_date_black_24dp"
+                android:ems="10"
+                android:hapticFeedbackEnabled="true"
+                android:inputType="date"
+                android:paddingRight="24dp"
+                android:text="@string/create_event_text_date"
+                android:textAlignment="center"
+                android:textColor="@android:color/black" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:gravity="bottom">
+
+            <Button
+                android:id="@+id/button_create_event"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="@string/create_event_button" />
+        </TableRow>
+    </TableLayout>
 </android.support.constraint.ConstraintLayout>
