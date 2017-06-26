@@ -1,6 +1,40 @@
 <resources>
     <string name="app_name">Lunchmates</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="title_activity_create_event">CreateEventActivity</string>
-    <string name="title_activity_show_event">ShowEventActivity</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_activity_create_event">Event erstellen</string>
+    <string name="title_activity_show_event">Event anzeigen</string>
+    <string name="title_activity_main">Lunchmates</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Main Screen -->
+    <string name="main_nearby_text">Aktuell in der Nähe</string>
+    <string name="main_starting_events">Starten in 10 Min</string>
+
+    <!-- Menu -->
+    <string name="action_settings">Einstellungen</string>
+    <string name="user_image">insert user image hier</string>
+    <string name="user_name">Max Mustermann</string>
+    <string name="main_drawer_settings">Einstellungen</string>
+
+    <!-- Settings -->
+    <string name="settings_share_position">Aktuelle Position teilen</string>
+    <string name="settings_button_logout">Abmelden</string>
+    <string name="settings_button_delete_profile">Profil löschen</string>
+
+    <!-- Create Event -->
+    <string name="create_event_text_location">Ort</string>
+    <string name="create_event_text_time">Uhrzeit</string>
+    <string name="create_event_text_date">Datum</string>
+    <string name="create_event_button">Erstellen</string>
+
+    <!-- Show Event -->
+    <string name="show_event_button_arrived">Ist angekommen</string>
+    <string name="show_event_button_not_arrived">Nicht angekommen</string>
+    <string name="show_event_text_name">Dein Event mit Powereater93</string>
+    <string name="show_event_text_location">Treffpunkt:Eingangshalle Mensa Nord</string>
+    <string name="show_event_text_date">Datum:5.7.2017</string>
+    <string name="show_event_text_time">Uhrzeit:11:45</string>
+
 </resources>
