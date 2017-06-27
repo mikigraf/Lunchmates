@@ -11,6 +11,7 @@ public class PreferencesControllerImpl implements PreferencesController {
     private final String NOTIFICATION_TOKEN = "notificationToken";
     private final String SESSION_TOKEN = "sessionToken";
     private final String USER_ID = "userId";
+    private final String GPS_SHARING = "gps";
 
     private SharedPreferences preferences;
 
@@ -68,5 +69,15 @@ public class PreferencesControllerImpl implements PreferencesController {
     @Override
     public void setUserId(int id) {
         preferences.edit().putInt(USER_ID, id).commit();
+    }
+
+    @Override
+    public void setGPSSharing(boolean share) {
+        preferences.edit().putBoolean(GPS_SHARING, share).commit();
+    }
+
+    @Override
+    public boolean isGPSSharing() {
+        return preferences.getBoolean(GPS_SHARING, false);
     }
 }

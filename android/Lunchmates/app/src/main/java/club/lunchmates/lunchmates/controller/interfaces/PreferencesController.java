@@ -56,4 +56,8 @@ public interface PreferencesController {
      * @param id The new id
      */
     void setUserId(int id);
+
+    void setGPSSharing(boolean share);
+
+    boolean isGPSSharing();
 }
