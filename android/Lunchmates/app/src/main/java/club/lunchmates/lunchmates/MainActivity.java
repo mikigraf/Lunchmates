@@ -102,6 +102,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        RestHelper helper = new RestHelperImpl();
+        RestHelper.DataReceivedListener<Integer> listener = new RestHelper.DataReceivedListener<Integer>() {
+            @Override
+            public void onDataReceived(Integer data) {
+                nearbyNumber.setText(data);
+            }
+        };
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {

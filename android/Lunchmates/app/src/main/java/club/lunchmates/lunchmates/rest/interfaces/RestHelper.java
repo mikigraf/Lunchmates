@@ -46,6 +46,8 @@ public interface RestHelper {
 
     void usersEventsGetById(int id, DataReceivedListener<List<UsersEvents>> listener);
 
+    void getEventsCount(DataReceivedListener<Integer> listener);
+
     interface DataReceivedListener<T> {
         void onDataReceived(T data);
     }

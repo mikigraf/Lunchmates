@@ -81,4 +81,7 @@ public interface LunchmatesClient {
 
     @GET("/usersEvents/getById/{id}")
     Call<List<UsersEvents>> usersEventsGetById(@Path("id") int id);
+
+    @GET("/events/getCount")
+    Call<Integer> getEventsCount();
 }
