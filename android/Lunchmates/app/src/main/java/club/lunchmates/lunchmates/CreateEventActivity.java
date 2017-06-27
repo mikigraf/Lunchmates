@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -24,6 +25,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private boolean timeTextCleared = false;
     private boolean dateTextCleared = false;
     private TimePicker eventTimePicker;
+    private DatePicker eventDatePicker;
     private Calendar calendar;
     private String format = "";
     private Button btnCreateEvent;
@@ -38,14 +40,13 @@ public class CreateEventActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        initDatePicker();
+        initTimePicker();
         btnCreateEvent = (Button) findViewById(R.id.button_create_event);
         btnCreateEvent.setEnabled(false);
-//        eventTimePicker = (TimePicker) findViewById(R.id.event_time_picker);
-//        eventTimePicker.setVisibility(View.GONE);
-//        eventTimePicker.setIs24HourView(true);
-
 
         final EditText locationEdit = (EditText) findViewById(R.id.text_location);
+        locationEdit.clearFocus();
         locationEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -65,18 +66,21 @@ public class CreateEventActivity extends AppCompatActivity {
         });
 
         final TextView timeEdit = (TextView) findViewById(R.id.text_time);
-        timeEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        timeEdit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && !timeTextCleared) {
+            public void onClick(View v) {
+                if (!timeTextCleared) {
                     timeEdit.setText("");
                     timeTextCleared = true;
+                    eventTimePicker.setVisibility(View.VISIBLE);
                 } else {
                     calendar = Calendar.getInstance();
                     currHour = calendar.get(Calendar.HOUR_OF_DAY);
                     currMin = calendar.get(Calendar.MINUTE);
-                    inputHour = Integer.parseInt(timeEdit.getText().toString().split(":")[0]);
-                    inputMin = Integer.parseInt(timeEdit.getText().toString().split(":")[1]);
+                    eventTimePicker.setVisibility(View.VISIBLE);
+//                    eventTimePicker.
+                    inputHour = 0;//Integer.parseInt(timeEdit.getText().toString().split(":")[0]);
+                    inputMin = 0;//Integer.parseInt(timeEdit.getText().toString().split(":")[1]);
 
                     if (!checkTime()) {
                         Toast.makeText(CreateEventActivity.this, "Bitte die Uhrzeit prüfen! H:M>" + currHour + ":" + currMin, Toast.LENGTH_SHORT).show();
@@ -87,6 +91,29 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
             }
         });
+
+//        timeEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus && !timeTextCleared) {
+//                    timeEdit.setText("");
+//                    timeTextCleared = true;
+//                } else {
+//                    calendar = Calendar.getInstance();
+//                    currHour = calendar.get(Calendar.HOUR_OF_DAY);
+//                    currMin = calendar.get(Calendar.MINUTE);
+//                    inputHour = Integer.parseInt(timeEdit.getText().toString().split(":")[0]);
+//                    inputMin = Integer.parseInt(timeEdit.getText().toString().split(":")[1]);
+//
+//                    if (!checkTime()) {
+//                        Toast.makeText(CreateEventActivity.this, "Bitte die Uhrzeit prüfen! H:M>" + currHour + ":" + currMin, Toast.LENGTH_SHORT).show();
+//                    }
+//                    if (checkLocation() && checkTime() && checkDate()) {
+//                        btnCreateEvent.setEnabled(true);
+//                    }
+//                }
+//            }
+//        });
 
         final TextView dateEdit = (TextView) findViewById(R.id.text_date);
         dateEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -180,5 +207,15 @@ public class CreateEventActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    void initTimePicker() {
+        eventTimePicker = (TimePicker) findViewById(R.id.event_time_picker);
+        eventTimePicker.setVisibility(View.GONE);
+        eventTimePicker.setIs24HourView(true);
+    }
+
+    void initDatePicker() {
+
     }
 }
