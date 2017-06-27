@@ -11,6 +11,7 @@ public class PreferencesControllerImpl implements PreferencesController {
     private final String NOTIFICATION_TOKEN = "notificationToken";
     private final String SESSION_TOKEN = "sessionToken";
     private final String USER_ID = "userId";
+    private final String USER_NAME = "userName";
 
     private SharedPreferences preferences;
 
@@ -66,7 +67,20 @@ public class PreferencesControllerImpl implements PreferencesController {
     }
 
     @Override
+    public String getUserName() {
+        return preferences.getString(USER_NAME, null);
+    }
+
+    @Override
     public void setUserId(int id) {
         preferences.edit().putInt(USER_ID, id).commit();
+    }
+
+    @Override
+    public void setUserName(String name) {
+        if(name == null) {
+            throw new IllegalArgumentException("User name  is null");
+        }
+        preferences.edit().putString(USER_NAME, name).apply();
     }
 }
