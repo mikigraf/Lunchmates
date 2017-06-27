@@ -18,6 +18,7 @@ import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -70,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //go to the login screen again?
-                Toast.makeText(SettingsActivity.this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
+                FirebaseAuth.getInstance().signOut();
             }
         });
 
@@ -80,6 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
                 //remove user from the db
                 //go to the login screen again?
                 Toast.makeText(SettingsActivity.this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
+                
             }
         });
 
