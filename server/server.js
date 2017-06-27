@@ -1,15 +1,17 @@
 var express = require('express');
 var app = express();
+var crypto = require('crypto');
 var http = require('http');
+var request = require('request');
 var firebase = require("./firebase.js");
 var db = require('./sql.js');
 
 firebase.initFirebase();
 
 var exampleEvent = {
-    'eventId':1,
+    'eventId': 1,
     'ort': 'Emil-Figge-Str. 42, 44137 Dortmund',
-    'uhrzeit' : '16:50',
+    'uhrzeit': '16:50',
     'datum': '10.06.2017'
 };
 
@@ -33,7 +35,7 @@ app.put('/sendNotification/:token/:message', function (req, res) {
     res.json({status: 200});
 });
 
-app.get('/health', function(req,res){
+app.get('/health', function (req, res) {
     res.send('Healthy');
 });
 
@@ -50,11 +52,11 @@ app.put('/event/add/:name/:x/:y/:time/:author', function (req, res) {
     var author = req.params.author;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             return res.json({status: 500, error: err});
         } else {
             var id = data.insertId;
-            return res.json({status: 200, newId : id});
+            return res.json({status: 200, newId: id});
         }
     };
 
@@ -63,9 +65,9 @@ app.put('/event/add/:name/:x/:y/:time/:author', function (req, res) {
 
 app.get('/event/getById/:id', function (req, res) {
     var id = req.params.id;
-    
+
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -81,7 +83,7 @@ app.get('/event/getById/:id', function (req, res) {
  */
 app.get('/event/getAll', function (req, res) {
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -99,7 +101,7 @@ app.get('/event/getByUser/:id', function (req, res) {
     var user = req.params.id;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -117,7 +119,7 @@ app.get('/event/getParticipants/:event', function (req, res) {
     var event = req.params.event;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -133,17 +135,17 @@ app.get('/event/getParticipants/:event', function (req, res) {
 /**
  * Adds a position to the database
  */
-app.put('/position/add/:x/:y/:author', function (req, res){
+app.put('/position/add/:x/:y/:author', function (req, res) {
     var x = req.params.x;
     var y = req.params.y;
     var author = req.params.author;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             return res.json({status: 500, error: err});
         } else {
             var id = data.insertId;
-            return res.json({status: 200, newId : id});
+            return res.json({status: 200, newId: id});
         }
     };
 
@@ -157,7 +159,7 @@ app.get('/position/getUsersLatest/:user', function (req, res) {
     var user = req.params.user;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -175,7 +177,7 @@ app.get('/position/getLatestPositionOfParticipants/:event', function (req, res) 
     var event = req.params.event;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -193,7 +195,7 @@ app.get('/position/getById/:id', function (req, res) {
     var id = req.params.id;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -213,8 +215,8 @@ app.put('/user/updateToken/:id/:token', function (req, res) {
     var id = req.params.id;
     var token = req.params.token;
 
-    var callback = function(err, data) {
-        if(err) {
+    var callback = function (err, data) {
+        if (err) {
             return res.json({status: 500, error: err})
         } else {
             return res.json({status: 200});
@@ -231,7 +233,7 @@ app.get('/user/getEvents/:user', function (req, res) {
     var user = req.params.user;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -249,7 +251,7 @@ app.get('/user/getById/:id', function (req, res) {
     var id = req.params.id;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             console.log(err);
             return res.json({stauts: 500, error: err});
         } else {
@@ -267,7 +269,7 @@ app.get('/user/delete/:id', function (req, res) {
     var id = req.params.id;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             return res.json({status: 500, error: err})
         } else {
             return res.json({status: 200});
@@ -275,6 +277,48 @@ app.get('/user/delete/:id', function (req, res) {
     };
 
     db.userDelete(id, callback);
+});
+
+/**
+ * Logs in the user with the firebase token
+ */
+app.put('/user/login/:token', function (req, res) {
+    var token = req.params.token;
+    var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + token;
+    request(url, function (error, response, body) {
+        if (response && response.statusCode == 200) {
+            var json = JSON.parse(body);
+            var email = json.email;
+            var name = json.name;
+            var callback = function (err, data) {
+                if (err) {
+                    return res.json({success: false});
+                } else {
+                    if (data[0]) {
+                        console.log(data[0]);
+                        return res.json({success: true, userId: data[0].id, sessionToken: data[0].session_token});
+                    } else {
+                        var session_token = crypto.randomBytes(64).toString('hex');
+                        var callbackInsert = function (err, data) {
+                            if (err) {
+                                return res.json({success: false});
+                            } else {
+                                var id = data.insertId;
+                                return res.json({success: true, userId: id, sessionToken: session_token});
+                            }
+                        };
+                        db.userAdd(name, email, null, session_token, callbackInsert);
+                    }
+                }
+            };
+            db.userGetByEmail(email, callback);
+
+            console.log(email);
+        }
+        else {
+            return res.json({success: false});
+        }
+    });
 });
 
 /* ##################################### UsersEvents ##################################### */
@@ -287,11 +331,11 @@ app.put('/usersEvents/add/:user/:event', function (req, res) {
     var event = req.params.event;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             return res.json({status: 500, error: err})
         } else {
             var id = data.insertId;
-            return res.json({status: 200, newId : id});
+            return res.json({status: 200, newId: id});
         }
     };
 
@@ -306,7 +350,7 @@ app.get('/usersEvents/remove/:user/:event', function (req, res) {
     var event = req.params.event;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             return res.json({status: 500, error: err})
         } else {
             return res.json({status: 200});
@@ -323,7 +367,7 @@ app.get('/usersEvents/getById/:id', function (req, res) {
     var id = req.params.id;
 
     var callback = function (err, data) {
-        if(err) {
+        if (err) {
             return res.json({status: 500, error: err})
         } else {
             return res.json(data);
@@ -335,7 +379,7 @@ app.get('/usersEvents/getById/:id', function (req, res) {
 
 /* ##################################### ServerStart ##################################### */
 
-var server = app.listen(9999,'127.0.0.1',function(){
+var server = app.listen(9999, '0.0.0.0', function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log("Server for LUNCHMATES is working...");
