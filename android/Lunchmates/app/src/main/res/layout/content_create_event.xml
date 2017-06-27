@@ -38,7 +38,9 @@
                 android:drawableLeft="@drawable/ic_add_location_black_24dp"
                 android:hapticFeedbackEnabled="true"
                 android:inputType="text"
+                android:maxLines="1"
                 android:paddingRight="24dp"
+                android:selectAllOnFocus="false"
                 android:text="@string/create_event_text_location"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
@@ -52,17 +54,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.3">
 
-            <EditText
+            <TimePicker
+                android:id="@+id/event_time_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/text_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/black"
                 android:drawableLeft="@drawable/ic_time_black_24dp"
-                android:editable="false"
                 android:ems="10"
-                android:hapticFeedbackEnabled="true"
-                android:inputType="time"
                 android:paddingRight="24dp"
                 android:text="@string/create_event_text_time"
                 android:textAlignment="center"
@@ -75,10 +80,12 @@
             android:layout_height="match_parent"
             android:layout_weight="0.3">
 
-            <!--DatePicker
+            <DatePicker
                 android:id="@+id/datePicker"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" /-->
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
             <EditText
                 android:id="@+id/text_date"
                 android:layout_width="wrap_content"
