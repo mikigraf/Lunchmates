@@ -73,6 +73,12 @@ exports.eventGetById = function (id, callback) {
     });
 };
 
+exports.eventGetCount = function(callback){
+    con.query("SELECT COUNT(*) FROM Events;", function(err,result){
+        callback(err,result);
+    })
+}
+
 /* ##################################### USER ##################################### */
 
 exports.userGetEvents = function (user, callback) {
