@@ -23,6 +23,9 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.concurrent.TimeUnit;
 
+import club.lunchmates.lunchmates.controller.PreferencesControllerImpl;
+import club.lunchmates.lunchmates.controller.interfaces.PreferencesController;
+
 public class SettingsActivity extends AppCompatActivity {
 
     
@@ -32,6 +35,8 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        final PreferencesController preferences;
+        preferences = new PreferencesControllerImpl(this);
 
 
 
@@ -51,9 +56,12 @@ public class SettingsActivity extends AppCompatActivity {
                         Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(onGPS);
                     }
+                    preferences.setGPSSharing(true);
+                    Toast.makeText(SettingsActivity.this, "Location sharing is " + boolToString(preferences.isGPSSharing()), Toast.LENGTH_SHORT).show();
                 } else {
                     //dont track the user any more
-
+                    preferences.setGPSSharing(false);
+                    Toast.makeText(SettingsActivity.this, "Location sharing is " + boolToString(preferences.isGPSSharing()), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -76,5 +84,11 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
     }
+
+
+    public String boolToString(boolean value) {
+        return value ? "true" : "false";
+    }
+
 
 }
