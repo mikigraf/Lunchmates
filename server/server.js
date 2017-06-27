@@ -3,8 +3,10 @@ var app = express();
 var http = require('http');
 var firebase = require("./firebase.js");
 var db = require('./sql.js');
+var timer = require("./timer.js");
 
 firebase.initFirebase();
+timer.startNotificationTimer();
 
 var exampleEvent = {
     'eventId':1,
