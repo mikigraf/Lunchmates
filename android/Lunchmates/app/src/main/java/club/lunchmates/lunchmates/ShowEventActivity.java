@@ -2,8 +2,13 @@ package club.lunchmates.lunchmates;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -16,11 +21,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 
 public class ShowEventActivity extends AppCompatActivity
@@ -35,21 +43,28 @@ public class ShowEventActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Intent intent = getIntent();
+        int event_id = intent.getIntExtra("event_id", 0);
+
         initLayout();
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.show_event_map);
-//        mapFragment.getMapAsync(this);
+//        SupportMapFragment se_mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.show_event_map);
+//        se_mapFragment.getMapAsync(ShowEventActivity.this);
 
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        MapsInitializer.initialize(ShowEventActivity.this);
         eventMap = googleMap;
-
-// Add a marker for FH Dortmund and move the camera.
-//        LatLng fhDO = new LatLng(51.493674f, 7.420105f);
-//        eventMap.addMarker(new MarkerOptions().position(fhDO).title("FH DO"));
+        eventMap.setMyLocationEnabled(true);
+//        Add a marker for me and my lunch mate.
+//        LatLng me = new LatLng(51.493674f, 7.420105f);
+//        LatLng mate = new LatLng();
+//        eventMap.addMarker(new MarkerOptions().position().title("Ich"));
+//        eventMap.addMarker(new MarkerOptions().position().title("Mate"));
+//        eventMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fhDO, 15.0f));
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
@@ -62,10 +77,37 @@ public class ShowEventActivity extends AppCompatActivity
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             return;
+        } else {
+            if (!eventMap.isMyLocationEnabled())
+                eventMap.setMyLocationEnabled(true);
+
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            if (myLocation == null) {
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                String provider = lm.getBestProvider(criteria, true);
+                myLocation = lm.getLastKnownLocation(provider);
+            }
+
+            if (myLocation != null) {
+                LatLng userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                eventMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 14), 1500, null);
+            }
         }
-        eventMap.setMyLocationEnabled(true);
-        //eventMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fhDO, 15.0f));
     }
+
+//    private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+//        @Override
+//        public void onMyLocationChange(Location location) {
+//            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+//            mMarker = mMap.addMarker(new MarkerOptions().position(loc));
+//            if(mMap != null){
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
+//            }
+//        }
+//    };
 
 //    @Override
 //    public void onConfigurationChanged(Configuration newConfig) {

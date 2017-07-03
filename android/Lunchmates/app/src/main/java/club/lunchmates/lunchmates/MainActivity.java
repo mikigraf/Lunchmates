@@ -3,9 +3,10 @@ package club.lunchmates.lunchmates;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,22 +27,31 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Arrays;
 import java.util.List;
 
+import club.lunchmates.lunchmates.controller.PreferencesControllerImpl;
+import club.lunchmates.lunchmates.controller.interfaces.PreferencesController;
 import club.lunchmates.lunchmates.data.Event;
 import club.lunchmates.lunchmates.rest.RestHelperImpl;
 import club.lunchmates.lunchmates.rest.interfaces.RestHelper;
 
 import static android.R.attr.value;
+import static android.R.attr.widgetCategory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
     private static final String BASE_URL = "http://10.0.2.2:9999/";
     private TextView nearbyNumber;
-
+    private TextView startingNumber;
     private GoogleMap mMap;
+    private LatLngBounds mapCameraBounds;
+    private static final int DOUBLE_BACK_TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private long msBackPressed = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +62,6 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        TextView t = (TextView) findViewById(R.id.nearbyNumber);
         //new RetrieveEventsTask(t).execute(getAbsoluteUrl("events"));
         RestHelper helper = new RestHelperImpl();
 
@@ -67,6 +77,8 @@ public class MainActivity extends AppCompatActivity
         };
         helper.eventGetAll(listener);
 
+//        initEventsNumbers();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -74,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.startActivity(new Intent(MainActivity.this, ShowEventActivity.class));    //CreateEventActivity.class));
+                MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));    //CreateEventActivity.class));
             }
         });
 
@@ -83,14 +95,35 @@ public class MainActivity extends AppCompatActivity
         fab_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));    //CreateEventActivity.class));
+                MainActivity.this.startActivity(new Intent(MainActivity.this, ShowEventActivity.class));
             }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+        //drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -119,7 +152,15 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //close the app if back is twice pressed in DOUBLE_BACK_TIME_INTERVAL seconds
+            if (msBackPressed + DOUBLE_BACK_TIME_INTERVAL > System.currentTimeMillis()) {
+                super.onBackPressed(); //close the app
+                return;
+            } else {
+                Toast.makeText(this, "Nochmaliges Tippen beendet die App.", Toast.LENGTH_SHORT).show();
+            }
+
+            msBackPressed = System.currentTimeMillis();
         }
     }
 
@@ -151,6 +192,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_settings) {
+            item.setChecked(true);
             MainActivity.this.startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
 
@@ -162,10 +204,36 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+//        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+//            @Override
+//            public void onInfoWindowClick(Marker marker) {
+//                Intent i = new Intent(MainActivity.this, ShowEventActivity.class);
+//                i.putExtra("event_id", 123456);
+//                MainActivity.this.startActivity(i);
+////               Toast.makeText(MainActivity.this, "Info Window clicked!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        mMap.getUiSettings().setCompassEnabled(true);
+//        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+//
+//        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
+//        LatLng foodFak = new LatLng(51.4935117f, 7.4161913f);
+//
+//        mMap.addMarker(new MarkerOptions()
+//                .position(mensaTU)
+//                .title("Hauptmensa TU Dortmund")
+//                .snippet("Powereater93"));
+//        mMap.addMarker(new MarkerOptions()
+//                .position(foodFak)
+//                .title("Food Fakultät")
+//                .snippet("HerrDöner"));
+//
+//        markEventsOnTheMap();
+////        mMap.setLatLngBoundsForCameraTarget(mapCameraBounds);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mensaTU, 15.0f));
 
-        // Add a marker for FH Dortmund and move the camera.
-        LatLng fhDO = new LatLng(51.493674f, 7.420105f);
-        mMap.addMarker(new MarkerOptions().position(fhDO).title("FH DO"));
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -176,7 +244,68 @@ public class MainActivity extends AppCompatActivity
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        //mMap.setMyLocationEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fhDO, 15.0f));
+    }
+
+    public void markEventsOnTheMap() {
+        RestHelper helper = new RestHelperImpl();
+
+        RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
+            @Override
+            public void onDataReceived(List<Event> data) {
+                if (data != null) {
+                    LatLng eLocation = null;
+                    for (Event e : data) {
+                        eLocation = new LatLng(Float.parseFloat(e.getX()), Float.parseFloat(e.getY()));
+                        mMap.addMarker(new MarkerOptions().position(eLocation).title(e.getName())
+                                .snippet("Powereater93"));
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eLocation, 15.0f));
+                }
+                findMapCameraBounds(data);
+            }
+        };
+        helper.eventGetAll(listener);
+    }
+
+    public LatLngBounds findMapCameraBounds(List<Event> eventData) {
+        LatLng eLocation = null;
+        LatLng mostLeftDown, mostRightUp;//, mostUp, mostDown;
+        float[] lat = new float[eventData.size()];
+        float[] lng = new float[eventData.size()];
+
+        for (int i = 0; i < eventData.size(); i++) {
+            lat[i] = Float.parseFloat(eventData.get(i).getX());
+            lng[i] = Float.parseFloat(eventData.get(i).getY());
+        }
+
+        Arrays.sort(lat);
+        Arrays.sort(lng);
+        mostLeftDown = new LatLng(lat[0], lng[0]);
+        mostRightUp = new LatLng(lat[lat.length-1], lng[lng.length-1]);
+
+        mapCameraBounds = new LatLngBounds(new LatLng(51.4930692f, 7.4139248f), new LatLng(51.4935117f, 7.4161913f));   //new LatLngBounds(mostLeftDown, mostRightUp);
+        return mapCameraBounds;
+    }
+
+    public void initEventsNumbers() {
+        RestHelper helper = new RestHelperImpl();
+        RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
+            @Override
+            public void onDataReceived(List<Event> data) {
+                if (data != null) {
+                    int counter = 0;
+                    for (Event e : data) {
+                        counter++;
+                        Log.i("MainActivity", "Event " + e.getName() + " " + e.getX() + " " + e.getY());
+                    }
+                    nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
+                    nearbyNumber.setText(counter);
+                    startingNumber = (TextView) findViewById(R.id.startingNumber);
+                    startingNumber.setText(counter);
+                }
+            }
+        };
+//        helper.userGetEvents(preferences.getUserId(), listener);
+//        helper.
     }
 }
