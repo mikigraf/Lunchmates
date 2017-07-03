@@ -37,13 +37,12 @@
                 android:background="@android:color/darker_gray"
                 android:orientation="horizontal">
 
-                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
+                <fragment xmlns:tools="http://schemas.android.com/tools"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/map"
-                    tools:context=".MapsActivity"
-                    android:name="com.google.android.gms.maps.SupportMapFragment" />
+                    tools:context=".MainActivity"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
             </LinearLayout>
 
@@ -68,10 +67,8 @@
                         android:layout_alignParentLeft="true"
                         android:layout_marginLeft="10dp"
                         android:text="@string/main_nearby_text"
-                        android:textSize="16sp"
-                        tools:layout_editor_absoluteX="55dp"
-                        tools:layout_editor_absoluteY="-420dp" />
-
+                        android:textSize="16sp">
+                    </TextView>
                     <TextView
                         android:id="@+id/startingText"
                         android:layout_width="wrap_content"
@@ -82,21 +79,21 @@
                         android:gravity="bottom|right"
                         android:text="@string/main_starting_events"
                         android:textSize="16sp"
-                        tools:layout_editor_absoluteX="98dp"
-                        tools:layout_editor_absoluteY="296dp"
-                        tools:ignore="RelativeOverlap" />
+                        tools:ignore="RelativeOverlap">
+                    </TextView>
 
                     <TextView
                         android:id="@+id/nearbyNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/nearbyDescription"
-                        android:layout_marginLeft="50dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="false"
+                        android:layout_marginLeft="37dp"
+                        android:layout_marginStart="37dp"
                         android:text="0"
                         android:textSize="50sp"
-                        android:textStyle="bold"
-                        tools:layout_editor_absoluteX="35dp"
-                        tools:layout_editor_absoluteY="153dp" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/startingNumber"
@@ -104,12 +101,12 @@
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/startingText"
                         android:layout_alignParentRight="true"
-                        android:layout_marginRight="50dp"
+                        android:layout_alignParentTop="false"
+                        android:layout_marginEnd="42dp"
+                        android:layout_marginRight="42dp"
                         android:text="0"
                         android:textSize="50sp"
-                        android:textStyle="bold"
-                        tools:layout_editor_absoluteX="160dp"
-                        tools:layout_editor_absoluteY="247dp" />
+                        android:textStyle="bold" />
 
                 </RelativeLayout>
             </LinearLayout>
