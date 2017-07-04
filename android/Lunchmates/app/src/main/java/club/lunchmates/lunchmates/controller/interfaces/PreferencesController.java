@@ -52,11 +52,22 @@ public interface PreferencesController {
     int getUserId();
 
     /**
+     * Returns the id of the current user
+     * @return The id of the user or -1 if the user is not authenticated yet
+     */
+    String getUserName();
+
+    /**
      * Sets the id of the current user
      * @param id The new id
      */
     void setUserId(int id);
 
+    /**
+     * Sets the inameof the current user
+     * @param name The new user
+     */
+    void setUserName(String name);
     void setGPSSharing(boolean share);
 
     boolean isGPSSharing();

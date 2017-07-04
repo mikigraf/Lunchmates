@@ -21,7 +21,7 @@
         android:contentDescription="@string/user_image"
         android:cropToPadding="false"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/userName"

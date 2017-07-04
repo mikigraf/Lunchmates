@@ -20,6 +20,8 @@
   "dependencies": {
     "express": "^4.15.3",
     "firebase-admin": "^5.0.0",
-    "mysql": "^2.13.0"
+	"request": "2.81.0",
+    "mysql": "^2.13.0",
+    "timer": "0.0.2"
   }
 }

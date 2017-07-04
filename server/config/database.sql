@@ -1,3 +1,11 @@
+CREATE TABLE Users
+(
+    id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    token VARCHAR(255),
+    session_token VARCHAR(255),
+    name VARCHAR(50),
+    email VARCHAR(100)
+);
 CREATE TABLE Events
 (
     name VARCHAR(100),
@@ -6,6 +14,7 @@ CREATE TABLE Events
     y VARCHAR(50),
     author INT(11),
     date DATETIME,
+    notificationSend TINYINT(1) DEFAULT '0',
     CONSTRAINT Events_author_fk FOREIGN KEY (author) REFERENCES Users (id)
 );
 CREATE INDEX Events_author_fk ON Events (author);
@@ -19,15 +28,6 @@ CREATE TABLE Positions
     CONSTRAINT Positions_user_fk FOREIGN KEY (user) REFERENCES Users (id)
 );
 CREATE INDEX Positions_user_fk ON Positions (user);
-
-CREATE TABLE Users
-(
-    id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    token VARCHAR(255),
-    session_token VARCHAR(255),
-    name VARCHAR(50),
-    email VARCHAR(100)
-);
 
 CREATE TABLE UsersEvents
 (

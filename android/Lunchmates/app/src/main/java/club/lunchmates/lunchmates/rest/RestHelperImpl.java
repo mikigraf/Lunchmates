@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import club.lunchmates.lunchmates.data.AuthenticationResult;
 import club.lunchmates.lunchmates.data.Event;
 import club.lunchmates.lunchmates.data.InsertResult;
 import club.lunchmates.lunchmates.data.Position;
@@ -22,7 +23,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestHelperImpl implements RestHelper {
-    private static final String API_BASE_URL = "http://192.168.1.2:9999/";
+    private static final String API_BASE_URL = "http://172.22.210.106:9999/";
     private static final String TAG = "RestHelperImpl";
 
     private LunchmatesClient getClient() {
@@ -191,6 +192,24 @@ public class RestHelperImpl implements RestHelper {
 
         Call<List<UsersEvents>> result = client.usersEventsGetById(id);
         ResultCallback<List<UsersEvents>> callback = new ResultCallback<>();
+        callback.addListener(listener);
+        result.enqueue(callback);
+    }
+
+    @Override
+    public void login(String token, DataReceivedListener<AuthenticationResult> listener) {
+        LunchmatesClient client = getClient();
+        Call<AuthenticationResult> result = client.login(token);
+        ResultCallback<AuthenticationResult>  callback = new ResultCallback<>();
+        callback.addListener(listener);
+        result.enqueue(callback);
+    }
+    @Override
+    public void getEventsCount(DataReceivedListener<Integer> listener) {
+        LunchmatesClient client = getClient();
+
+        Call<Integer> result = client.getEventsCount();
+        ResultCallback<Integer> callback = new ResultCallback<>();
         callback.addListener(listener);
         result.enqueue(callback);
     }
