@@ -81,6 +81,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         CreateEventActivity.this.startActivity(new Intent(CreateEventActivity.this, MainActivity.class));
+                        CreateEventActivity.this.finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
