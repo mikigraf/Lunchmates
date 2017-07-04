@@ -79,6 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //go to the login screen again?
                 FirebaseAuth.getInstance().signOut();
+                Toast.makeText(SettingsActivity.this, "Du hast dich abgemeldet", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -99,7 +100,13 @@ public class SettingsActivity extends AppCompatActivity {
                 helper.userDelete(preferences.getUserId(), listener);
 
                 //go to the login screen again?
-                Toast.makeText(SettingsActivity.this, "Not implemented yet?", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsActivity.this, "Die App wird jetzt beendet, du musst dich wieder anmelden", Toast.LENGTH_SHORT).show();
+                SettingsActivity.super.onBackPressed();
+//                System.runFinalization();
+//                SettingsActivity.super.onDestroy();
+//                SettingsActivity.super.onStop();
+//                SettingsActivity.this.finishActivity();
+                ;
             }
         });
 

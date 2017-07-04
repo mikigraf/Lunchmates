@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Text;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,6 +59,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final PreferencesController pref;
+        pref = new PreferencesControllerImpl(this);
+        TextView userName = (TextView) findViewById(R.id.userName);
+//        userName.setText(pref.getUserName());
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -87,6 +95,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));    //CreateEventActivity.class));
+                MainActivity.this.finish();
             }
         });
 
@@ -96,6 +105,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 MainActivity.this.startActivity(new Intent(MainActivity.this, ShowEventActivity.class));
+                MainActivity.this.finish();
             }
         });
 
@@ -192,34 +202,35 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//            @Override
-//            public void onInfoWindowClick(Marker marker) {
-//                Intent i = new Intent(MainActivity.this, ShowEventActivity.class);
-//                i.putExtra("event_id", 123456);
-//                MainActivity.this.startActivity(i);
-////               Toast.makeText(MainActivity.this, "Info Window clicked!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent i = new Intent(MainActivity.this, ShowEventActivity.class);
+                i.putExtra("event_id", 123456);
+                MainActivity.this.startActivity(i);
+                MainActivity.this.finish();
+//               Toast.makeText(MainActivity.this, "Info Window clicked!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 //        mMap.getUiSettings().setCompassEnabled(true);
 //        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-//
-//        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
-//        LatLng foodFak = new LatLng(51.4935117f, 7.4161913f);
-//
-//        mMap.addMarker(new MarkerOptions()
-//                .position(mensaTU)
-//                .title("Hauptmensa TU Dortmund")
-//                .snippet("Powereater93"));
-//        mMap.addMarker(new MarkerOptions()
-//                .position(foodFak)
-//                .title("Food Fakultät")
-//                .snippet("HerrDöner"));
-//
+
+        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
+        LatLng foodFak = new LatLng(51.4935117f, 7.4161913f);
+
+        mMap.addMarker(new MarkerOptions()
+                .position(mensaTU)
+                .title("Hauptmensa TU Dortmund")
+                .snippet("Powereater93"));
+        mMap.addMarker(new MarkerOptions()
+                .position(foodFak)
+                .title("Food Fakultät")
+                .snippet("HerrDöner"));
+
 //        markEventsOnTheMap();
-////        mMap.setLatLngBoundsForCameraTarget(mapCameraBounds);
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mensaTU, 15.0f));
+//        mMap.setLatLngBoundsForCameraTarget(mapCameraBounds);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mensaTU, 15.0f));
 
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
