@@ -203,7 +203,15 @@ public class RestHelperImpl implements RestHelper {
         ResultCallback<AuthenticationResult>  callback = new ResultCallback<>();
         callback.addListener(listener);
         result.enqueue(callback);
+    }
+    @Override
+    public void getEventsCount(DataReceivedListener<Integer> listener) {
+        LunchmatesClient client = getClient();
 
+        Call<Integer> result = client.getEventsCount();
+        ResultCallback<Integer> callback = new ResultCallback<>();
+        callback.addListener(listener);
+        result.enqueue(callback);
     }
 
     private class ResultCallback<T> implements Callback<T> {

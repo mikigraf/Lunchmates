@@ -5,8 +5,10 @@ var http = require('http');
 var request = require('request');
 var firebase = require("./firebase.js");
 var db = require('./sql.js');
+var timer = require("./timer.js");
 
 firebase.initFirebase();
+timer.startNotificationTimer();
 
 var exampleEvent = {
     'eventId': 1,
@@ -121,13 +123,26 @@ app.get('/event/getParticipants/:event', function (req, res) {
     var callback = function (err, data) {
         if (err) {
             console.log(err);
-            return res.json({stauts: 500, error: err});
+            return res.json({status: 500, error: err});
         } else {
             return res.json(data);
         }
     };
 
     db.eventGetParticipants(event, callback);
+});
+
+app.get('/event/getCount', function(req,res){
+    var callback = function(err,data){
+        if(err){
+            console.log(err);
+            return res.json({status: 500, error: err});
+        }else{
+            return res.json(data);
+        }
+    };
+
+    db.eventGetCount(event, callback);
 });
 
 /* ##################################### POSITION ##################################### */

@@ -87,4 +87,6 @@ public interface LunchmatesClient {
     @PUT("/user/login/{token}")
     Call<AuthenticationResult> login(@Path("token")String token);
 
+    @GET("/events/getCount")
+    Call<Integer> getEventsCount();
 }

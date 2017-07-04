@@ -68,4 +68,7 @@ public interface PreferencesController {
      * @param name The new user
      */
     void setUserName(String name);
+    void setGPSSharing(boolean share);
+
+    boolean isGPSSharing();
 }

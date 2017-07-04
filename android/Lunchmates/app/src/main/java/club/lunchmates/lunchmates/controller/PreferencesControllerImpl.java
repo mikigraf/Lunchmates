@@ -12,6 +12,7 @@ public class PreferencesControllerImpl implements PreferencesController {
     private final String SESSION_TOKEN = "sessionToken";
     private final String USER_ID = "userId";
     private final String USER_NAME = "userName";
+    private final String GPS_SHARING = "gps";
 
     private SharedPreferences preferences;
 
@@ -82,5 +83,14 @@ public class PreferencesControllerImpl implements PreferencesController {
             throw new IllegalArgumentException("User name  is null");
         }
         preferences.edit().putString(USER_NAME, name).apply();
+    }
+    @Override
+    public void setGPSSharing(boolean share) {
+        preferences.edit().putBoolean(GPS_SHARING, share).commit();
+    }
+
+    @Override
+    public boolean isGPSSharing() {
+        return preferences.getBoolean(GPS_SHARING, false);
     }
 }

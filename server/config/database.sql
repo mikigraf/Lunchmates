@@ -14,6 +14,7 @@ CREATE TABLE Events
     y VARCHAR(50),
     author INT(11),
     date DATETIME,
+    notificationSend TINYINT(1) DEFAULT '0',
     CONSTRAINT Events_author_fk FOREIGN KEY (author) REFERENCES Users (id)
 );
 CREATE INDEX Events_author_fk ON Events (author);

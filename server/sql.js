@@ -43,6 +43,18 @@ exports.positionGetById = function (id, callback) {
 
 /* ##################################### EVENTS ##################################### */
 
+exports.eventUpdateNotificationSend = function (id) {
+    con.query("UPDATE Events SET notificationSend = 1 WHERE id = ?", [id], function (err, data) {
+
+    });
+};
+
+exports.eventGetNotification = function (callback) {
+    con.query("SELECT * FROM Events WHERE EXTRACT(MINUTE FROM (date - CURRENT_TIMESTAMP())) <= 15 AND notificationSend = 0;", function (err, result) {
+        callback(err, result);
+    });
+};
+
 exports.eventAdd = function (name, x, y, time, author, callback) {
     con.query("INSERT INTO Events (name, x, y, date, author) VALUES(?,?,?,?,?);", [name, x, y, time, author], function (err, result) {
         callback(err, result);
@@ -72,6 +84,12 @@ exports.eventGetById = function (id, callback) {
         callback(err, result);
     });
 };
+
+exports.eventGetCount = function(callback){
+    con.query("SELECT COUNT(*) FROM Events;", function(err,result){
+        callback(err,result);
+    })
+}
 
 /* ##################################### USER ##################################### */
 
