@@ -10,7 +10,7 @@ var con = mysql.createConnection({
 
 exports.updateToken = function (id, token, callback) {
     con.query("UPDATE Users SET token = ? WHERE id = ?;", [token, id], function (err, result) {
-       callback(err, result);
+        callback(err, result);
     });
 };
 
@@ -18,7 +18,7 @@ exports.updateToken = function (id, token, callback) {
 /* ##################################### POSITION ##################################### */
 
 exports.positionAdd = function (x, y, author, time, callback) {
-    con.query("INSERT INTO Positions(x, y, user, time) VALUES(?,?,?,?);",[x,y,author,time], function (err, result) {
+    con.query("INSERT INTO Positions(x, y, user, time) VALUES(?,?,?,?);", [x, y, author, time], function (err, result) {
         callback(err, result);
     });
 };
@@ -56,7 +56,7 @@ exports.eventGetNotification = function (callback) {
 };
 
 exports.eventAdd = function (name, x, y, time, author, callback) {
-    con.query("INSERT INTO Events (name, x, y, date, author) VALUES(?,?,?,?,?);" , [name, x, y, time, author], function (err, result) {
+    con.query("INSERT INTO Events (name, x, y, date, author) VALUES(?,?,?,?,?);", [name, x, y, time, author], function (err, result) {
         callback(err, result);
     });
 };
@@ -74,7 +74,7 @@ exports.eventGetByUser = function (user, callback) {
 };
 
 exports.eventGetParticipants = function (event, callback) {
-    con.query("SELECT u.* FROM UsersEvents ue LEFT JOIN Users u ON ue.user = u.id WHERE ue.event = ?;", [event], function(err, result) {
+    con.query("SELECT u.* FROM UsersEvents ue LEFT JOIN Users u ON ue.user = u.id WHERE ue.event = ?;", [event], function (err, result) {
         callback(err, result);
     });
 };
@@ -95,7 +95,13 @@ exports.eventGetCount = function(callback){
 
 exports.userGetEvents = function (user, callback) {
     con.query("SELECT * FROM Events WHERE author = ?;", [user], function (err, result) {
-       callback(err, result);
+        callback(err, result);
+    });
+};
+
+exports.userGetByEmail = function (email, callback) {
+    con.query("SELECT id, name, email, session_token FROM Users WHERE email = ?;", [email], function (err, result) {
+        callback(err, result);
     });
 };
 
@@ -105,7 +111,7 @@ exports.userGetById = function (id, callback) {
     });
 };
 
-exports.userPpdateSessionToken = function (id, sessionToken, callback) {
+exports.userUpdateSessionToken = function (id, sessionToken, callback) {
     con.query("UPDATE Users SET session_token = ? WHERE id = ?;", [sessionToken, id], function (err, result) {
         callback(err, result);
     });
@@ -119,15 +125,15 @@ exports.userAdd = function (name, email, token, sessionToken, callback) {
 
 exports.userDelete = function (id, callback) {
     con.query("DELETE FROM UsersEvents WHERE user = ? OR event IN (SELECT id FROM Events WHERE author = ?);", [id, id], function (err, data) {
-        if(err) {
+        if (err) {
             callback(err);
         } else {
             con.query("DELETE FROM Positions WHERE user = ?;", [id], function (err, data) {
-                if(err) {
+                if (err) {
                     callback(err);
                 } else {
                     con.query("DELETE FROM Events WHERE author = ?;", [id], function (err, data) {
-                        if(err) {
+                        if (err) {
                             callback(err);
                         } else {
                             con.query("DELETE FROM Users WHERE id = ?;", [id], function (err, data) {

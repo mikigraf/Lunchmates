@@ -1,9 +1,11 @@
 package club.lunchmates.lunchmates.rest.interfaces;
 
 
+import java.net.Authenticator;
 import java.util.Date;
 import java.util.List;
 
+import club.lunchmates.lunchmates.data.AuthenticationResult;
 import club.lunchmates.lunchmates.data.Event;
 import club.lunchmates.lunchmates.data.InsertResult;
 import club.lunchmates.lunchmates.data.Position;
@@ -81,6 +83,9 @@ public interface LunchmatesClient {
 
     @GET("/usersEvents/getById/{id}")
     Call<List<UsersEvents>> usersEventsGetById(@Path("id") int id);
+
+    @PUT("/user/login/{token}")
+    Call<AuthenticationResult> login(@Path("token")String token);
 
     @GET("/events/getCount")
     Call<Integer> getEventsCount();

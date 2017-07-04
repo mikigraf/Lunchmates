@@ -3,6 +3,7 @@ package club.lunchmates.lunchmates.rest.interfaces;
 import java.util.Date;
 import java.util.List;
 
+import club.lunchmates.lunchmates.data.AuthenticationResult;
 import club.lunchmates.lunchmates.data.Event;
 import club.lunchmates.lunchmates.data.InsertResult;
 import club.lunchmates.lunchmates.data.Position;
@@ -46,6 +47,7 @@ public interface RestHelper {
 
     void usersEventsGetById(int id, DataReceivedListener<List<UsersEvents>> listener);
 
+    void login(String token, DataReceivedListener<AuthenticationResult> listener);
     void getEventsCount(DataReceivedListener<Integer> listener);
 
     interface DataReceivedListener<T> {
