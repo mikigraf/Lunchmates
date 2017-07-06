@@ -1,6 +1,5 @@
 package club.lunchmates.lunchmates;
 
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -8,9 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -21,13 +17,18 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.location.places.*;
 //import com.google.android.gms.location.places.PlaceReport; // "Place" is not resolved
 //import com.google.android.gms.location.places.ui.PlacePicker; // "ui" is not resolved
 //import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 import java.util.Locale;
+
+import club.lunchmates.lunchmates.controller.PreferencesControllerImpl;
+import club.lunchmates.lunchmates.controller.interfaces.PreferencesController;
+import club.lunchmates.lunchmates.data.InsertResult;
+import club.lunchmates.lunchmates.rest.RestHelperImpl;
+import club.lunchmates.lunchmates.rest.interfaces.RestHelper;
 
 public class CreateEventActivity extends AppCompatActivity {
     private boolean locationTextCleared = false;
@@ -51,6 +52,8 @@ public class CreateEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_event);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //TODO show place picker instead of textEdit for event location, i started following this tutorial http://www.truiton.com/2015/04/using-new-google-places-api-android/
 
         btnCreateEvent = (Button) findViewById(R.id.button_create_event);
         btnCreateEvent.setEnabled(false);
@@ -144,7 +147,7 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     void initLocationEdit() {
-        final EditText locationEdit = (EditText) findViewById(R.id.text_location);
+        final EditText locationEdit = (EditText) findViewById(R.id.text_CE_location);
         locationEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -166,7 +169,7 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     void initTimeEdit() {
-        final TextView timeEdit = (TextView) findViewById(R.id.text_time);
+        final TextView timeEdit = (TextView) findViewById(R.id.text_CE_time);
         timeEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,7 +182,7 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     void initDateEdit() {
-        final TextView dateEdit = (TextView) findViewById(R.id.text_date);
+        final TextView dateEdit = (TextView) findViewById(R.id.text_CE_date);
         dateEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,7 +211,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     inputMin = eventTimePicker.getMinute();
                 }
 
-                final TextView timeEdit = (TextView) findViewById(R.id.text_time);
+                final TextView timeEdit = (TextView) findViewById(R.id.text_CE_time);
                 timeEdit.setText(inputHour + ":" + inputMin);
                 RelativeLayout rl = (RelativeLayout) findViewById(R.id.event_time_picker_layout);
                 rl.setVisibility(View.GONE);
@@ -230,13 +233,13 @@ public class CreateEventActivity extends AppCompatActivity {
             public void onClick(View v) {
                 calendar = Calendar.getInstance(Locale.GERMANY);
                 currY = calendar.get(Calendar.YEAR);
-                currM = calendar.get(Calendar.MONTH)+1; //Calender.MONTH: return value starts at 0!
+                currM = calendar.get(Calendar.MONTH) + 1; //Calender.MONTH: return value starts at 0!
                 currD = calendar.get(Calendar.DAY_OF_MONTH);
                 inputY = eventDatePicker.getYear();
                 inputM = eventDatePicker.getMonth() + 1; //.getMonth(): return value starts at 0!
                 inputD = eventDatePicker.getDayOfMonth();
 
-                final TextView dateEdit = (TextView) findViewById(R.id.text_date);
+                final TextView dateEdit = (TextView) findViewById(R.id.text_CE_date);
                 dateEdit.setText(inputD + "." + inputM + "." + inputY);
                 RelativeLayout rl = (RelativeLayout) findViewById(R.id.event_date_picker_layout);
                 rl.setVisibility(View.GONE);
@@ -259,9 +262,26 @@ public class CreateEventActivity extends AppCompatActivity {
         btnCreateEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CreateEventActivity.this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateEventActivity.this, "Event erstellt!", Toast.LENGTH_SHORT).show();
+
                 //send location, date and time to the server and go back to the main screen
+                RestHelper helper = new RestHelperImpl();
+                RestHelper.DataReceivedListener<InsertResult> listener = new RestHelper.DataReceivedListener<InsertResult>() {
+                    @Override
+                    public void onDataReceived(InsertResult createEventResult) {
+                        if (createEventResult == null) {
+                            Toast.makeText(CreateEventActivity.this, "Event konnte nicht erstellt werden!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(CreateEventActivity.this, "Event erstellt!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                };
+                Calendar eventDate = Calendar.getInstance(Locale.GERMANY);
+                eventDate.set(inputY, inputM, inputD, inputHour, inputMin);
+                PreferencesController currPrefs = new PreferencesControllerImpl(CreateEventActivity.this);
+                helper.eventAdd(location, "x", "y", eventDate.getTime(), currPrefs.getUserId(), listener);
                 CreateEventActivity.this.startActivity(new Intent(CreateEventActivity.this, MainActivity.class));
+                CreateEventActivity.this.finish();
             }
         });
     }
