@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));    //CreateEventActivity.class));
+                MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));
             }
         });
 
@@ -146,10 +146,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        if(!isLogedIn) {
-        signIn();
-//            isLogedIn = true;
-//        }
+        if(!isLogedIn) {
+            signIn();
+            isLogedIn = true;
+        }
 
     }
 
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RESULT_CODE_LOGIN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-
+/			///////DEBUG
             Toast.makeText(MainActivity.this, "RESULT_CODE_LOGIN: " + result.getStatus(), Toast.LENGTH_LONG).show();
             initEventsNumbers();
             //update user name and email in the navbar
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity
             userEmail.setText("Test");
 //            Toast.makeText(MainActivity.this, "User name> " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
 //            Toast.makeText(MainActivity.this, "Email> " + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-
+			/////////
 
             if (result.isSuccess()) {
                 Toast.makeText(MainActivity.this, "RESULT_CODE_LOGIN_SUCCESS!", Toast.LENGTH_SHORT).show();
@@ -201,9 +201,31 @@ public class MainActivity extends AppCompatActivity
                 //update user name and email in the navbar
 //                TextView userName = (TextView) findViewById(R.id.userName);
 //                TextView userEmail = (TextView) findViewById(R.id.userEmail);
-//                userName.setText("Test");
-//                userEmail.setText("Test");
-//                drawer.requestLayout();
+//                userName.setText(mAuth.getCurrentUser().getDisplayName(););
+//                userEmail.setText(mAuth.getCurrentUser().getEmail());
+            }
+        }
+    }
+
+    private void sendGoogleLoginToken(String token) {
+        RestHelper helper = new RestHelperImpl();
+        RestHelper.DataReceivedListener<AuthenticationResult> listener = new RestHelper.DataReceivedListener<AuthenticationResult>() {
+            @Override
+            public void onDataReceived(AuthenticationResult result) {
+                if(result == null) {
+                    Toast.makeText(MainActivity.this, "Login connection error", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    if(!result.isSuccess()) {
+                        Toast.makeText(MainActivity.this, "Server error", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    PreferencesController prefs = new PreferencesControllerImpl(MainActivity.this);
+                    Log.d("bla", "token" + result.getSessionToken());
+                    prefs.setSessionToken(result.getSessionToken());
+                    prefs.setUserId(result.getUserId());
+
+                }
             }
         };
         helper.login(token, listener);

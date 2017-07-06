@@ -1,5 +1,6 @@
 package club.lunchmates.lunchmates;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -21,7 +23,17 @@ import android.widget.Toast;
 //import com.google.android.gms.location.places.ui.PlacePicker; // "ui" is not resolved
 //import com.google.android.gms.maps.model.LatLng;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import org.w3c.dom.Text;
+
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import club.lunchmates.lunchmates.controller.PreferencesControllerImpl;
@@ -35,7 +47,6 @@ public class CreateEventActivity extends AppCompatActivity {
     private TimePicker eventTimePicker;
     private DatePicker eventDatePicker;
     private Calendar calendar;
-    private String format = "";
     private Button btnCreateEvent, btnTimeOK, btnDateOK;
     private int currHour, currMin;
     private int inputHour = 0;
@@ -44,7 +55,11 @@ public class CreateEventActivity extends AppCompatActivity {
     private int inputY = 0;
     private int inputM = 0;
     private int inputD = 0;
-    private String location = "";
+    private boolean locationOK = false;
+    private static final int PLACE_PICKER_REQUEST = 1;
+    private static final LatLngBounds BOUNDS_DORTMUND = new LatLngBounds(
+            new LatLng(51.492072, 7.401180), new LatLng(51.492072, 7.454738));
+    private Place pickedPlace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,14 +112,14 @@ public class CreateEventActivity extends AppCompatActivity {
                 .show();
     }
 
-    boolean checkLocation() {
-        if (location.length() < 2) {
-            btnCreateEvent.setEnabled(false);
-            return false;
-        } else {
-            return true;
-        }
-    }
+//    boolean checkLocation() {
+//        if (location.length() < 2) {
+//            btnCreateEvent.setEnabled(false);
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
 
     boolean checkTime() {
 //        if((inputHour < currHour) && isToday()) return false;
@@ -137,8 +152,8 @@ public class CreateEventActivity extends AppCompatActivity {
 
     void initTimePicker() {
         eventTimePicker = (TimePicker) findViewById(R.id.event_time_picker);
-        eventTimePicker.setVisibility(View.VISIBLE);
         eventTimePicker.setIs24HourView(true);
+        eventTimePicker.setVisibility(View.VISIBLE);
     }
 
     void initDatePicker() {
@@ -147,25 +162,49 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     void initLocationEdit() {
-        final EditText locationEdit = (EditText) findViewById(R.id.text_CE_location);
-        locationEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        final TextView locationEdit = (TextView) findViewById(R.id.text_CE_location);
+        locationEdit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if (hasFocus && !locationTextCleared) {
+            public void onClick(View v) {
+                if (!locationTextCleared) {
                     locationEdit.setText("");
                     locationTextCleared = true;
-                } else {
-                    location = locationEdit.getText().toString();
-                    if (!checkLocation()) {
-                        Toast.makeText(CreateEventActivity.this, "Bitte das Ort prüfen!", Toast.LENGTH_SHORT).show();
-                    }
-                    if (checkLocation() && checkTime() && checkDate()) {
-                        btnCreateEvent.setEnabled(true);
-                    }
+                }
+                try {
+                    PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+                    intentBuilder.setLatLngBounds(BOUNDS_DORTMUND);
+                    Intent intent = intentBuilder.build(CreateEventActivity.this);
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
+
+                } catch (GooglePlayServicesRepairableException
+                        | GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode,
+                                    int resultCode, Intent data) {
+
+        if (requestCode == PLACE_PICKER_REQUEST
+                && resultCode == Activity.RESULT_OK) {
+            locationOK = true;
+            final Place place = PlacePicker.getPlace(this, data);
+            final CharSequence name = place.getName();
+            final CharSequence address = place.getAddress();
+            String attributions = (String) place.getAttributions();
+            if (attributions == null) {
+                attributions = "";
+            }
+
+            TextView locationEdit = (TextView) findViewById(R.id.text_CE_location);
+            locationEdit.setText(name + ", " + address/* + ", " + attributions*/);
+            pickedPlace = place;
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     void initTimeEdit() {
@@ -221,7 +260,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 if (!checkTime()) {
                     Toast.makeText(CreateEventActivity.this, "Bitte die Uhrzeit prüfen!", Toast.LENGTH_SHORT).show();
                 }
-                if (checkLocation() && checkTime() && checkDate()) {
+                if (locationOK && checkTime() && checkDate()) {
                     btnCreateEvent.setEnabled(true);
                 }
             }
@@ -249,7 +288,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 if (!checkDate()) {
                     Toast.makeText(CreateEventActivity.this, "Bitte das Datum prüfen!", Toast.LENGTH_SHORT).show();
                 }
-                if (checkLocation() && checkTime() && checkDate()) {
+                if (locationOK && checkTime() && checkDate()) {
                     btnCreateEvent.setEnabled(true);
                 }
                 if (isToday()) {
@@ -262,7 +301,6 @@ public class CreateEventActivity extends AppCompatActivity {
         btnCreateEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CreateEventActivity.this, "Event erstellt!", Toast.LENGTH_SHORT).show();
 
                 //send location, date and time to the server and go back to the main screen
                 RestHelper helper = new RestHelperImpl();
@@ -276,10 +314,17 @@ public class CreateEventActivity extends AppCompatActivity {
                         }
                     }
                 };
-                Calendar eventDate = Calendar.getInstance(Locale.GERMANY);
+                Calendar eventDate = Calendar.getInstance();
                 eventDate.set(inputY, inputM, inputD, inputHour, inputMin);
                 PreferencesController currPrefs = new PreferencesControllerImpl(CreateEventActivity.this);
-                helper.eventAdd(location, "x", "y", eventDate.getTime(), currPrefs.getUserId(), listener);
+                Date d = new Date();
+                d.setTime(eventDate.getTimeInMillis());
+                helper.eventAdd(pickedPlace.getName().toString(),
+                        String.valueOf(pickedPlace.getLatLng().latitude),
+                        String.valueOf(pickedPlace.getLatLng().longitude),
+                        d,
+                        currPrefs.getUserId(),
+                        listener);
                 CreateEventActivity.this.startActivity(new Intent(CreateEventActivity.this, MainActivity.class));
                 CreateEventActivity.this.finish();
             }
