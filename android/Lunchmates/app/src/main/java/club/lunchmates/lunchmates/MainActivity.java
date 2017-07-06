@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity
                 //update user name and email in the navbar
 //                TextView userName = (TextView) findViewById(R.id.userName);
 //                TextView userEmail = (TextView) findViewById(R.id.userEmail);
-//                userName.setText(mAuth.getCurrentUser().getDisplayName(););
+//                userName.setText(mAuth.getCurrentUser().getDisplayName());
 //                userEmail.setText(mAuth.getCurrentUser().getEmail());
             }
         }
@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-       // helper.login(token, listener);
+       helper.login(token, listener);
     }
 
 //    private void sendGoogleLoginToken(String token) {
@@ -356,19 +356,19 @@ public class MainActivity extends AppCompatActivity
         ////////DEBUG
         markerId = new HashMap<>();
         LatLng foodFak = new LatLng(51.4935117f, 7.4161913f);
-        Marker m = mMap.addMarker(new MarkerOptions()
-                .position(foodFak)
-                .title("Food Fakultät")
-                .snippet("HerrDöner"));
-        markerId.put(m, 123);
+//        Marker m = mMap.addMarker(new MarkerOptions()
+//                .position(foodFak)
+//                .title("Food Fakultät")
+//                .snippet("HerrDöner"));
+//        markerId.put(m, 123);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(foodFak, 15.0f));
-
-        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
-        m = mMap.addMarker(new MarkerOptions()
-                .position(mensaTU)
-                .title("Hauptmensa TU Dortmund")
-                .snippet("Powereater93"));
-        markerId.put(m, 124);
+//
+//        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
+//        m = mMap.addMarker(new MarkerOptions()
+//                .position(mensaTU)
+//                .title("Hauptmensa TU Dortmund")
+//                .snippet("Powereater93"));
+//        markerId.put(m, 124);
         /////////
 
         RestHelper helper = new RestHelperImpl();
@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity
                 if (data != null) {
                     markerId = new HashMap<>();
 
-                    LatLng eLocation = null;
+                    LatLng eLocation = new LatLng(51.4930692f, 7.4139248f);
                     for (Event e : data) {
                         eLocation = new LatLng(Float.parseFloat(e.getX()), Float.parseFloat(e.getY()));
 
@@ -411,9 +411,9 @@ public class MainActivity extends AppCompatActivity
                         counter++;
                     }
                     nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
-                    nearbyNumber.setText(counter);
+                    nearbyNumber.setText(String.valueOf(counter));
                     startingNumber = (TextView) findViewById(R.id.startingNumber);
-                    startingNumber.setText(counter);
+                    startingNumber.setText(String.valueOf(counter));
                 }
             }
         };
