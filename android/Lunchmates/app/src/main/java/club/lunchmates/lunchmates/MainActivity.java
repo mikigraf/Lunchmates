@@ -211,8 +211,8 @@ public class MainActivity extends AppCompatActivity
                 //update user name and email in the navbar
 //                TextView userName = (TextView) findViewById(R.id.userName);
 //                TextView userEmail = (TextView) findViewById(R.id.userEmail);
-                userName.setText(mAuth.getCurrentUser().getDisplayName());
-                userEmail.setText(mAuth.getCurrentUser().getEmail());
+//                userName.setText(mAuth.getCurrentUser().getDisplayName());
+//                userEmail.setText(mAuth.getCurrentUser().getEmail());
             }
         }
     }
