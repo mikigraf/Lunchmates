@@ -66,7 +66,7 @@ import static android.R.attr.widgetCategory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
-    private static final String BASE_URL = "http://10.0.2.2:9999/";
+    private static final String BASE_URL = "http://172.22.210.106:9999/";
     private static final int RESULT_CODE_LOGIN = 815;
     private TextView nearbyNumber;
     private TextView startingNumber;
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RESULT_CODE_LOGIN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-/			///////DEBUG
+			///////DEBUG
             Toast.makeText(MainActivity.this, "RESULT_CODE_LOGIN: " + result.getStatus(), Toast.LENGTH_LONG).show();
             initEventsNumbers();
             //update user name and email in the navbar
@@ -231,29 +231,29 @@ public class MainActivity extends AppCompatActivity
        // helper.login(token, listener);
     }
 
-    private void sendGoogleLoginToken(String token) {
-        RestHelper helper = new RestHelperImpl();
-        RestHelper.DataReceivedListener<AuthenticationResult> listener = new RestHelper.DataReceivedListener<AuthenticationResult>() {
-            @Override
-            public void onDataReceived(AuthenticationResult result) {
-                if(result == null) {
-                    Toast.makeText(MainActivity.this, "Login connection error", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    if(!result.isSuccess()) {
-                        Toast.makeText(MainActivity.this, "Server error", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    PreferencesController prefs = new PreferencesControllerImpl(MainActivity.this);
-                    Log.d("bla", "token" + result.getSessionToken());
-                    prefs.setSessionToken(result.getSessionToken());
-                    prefs.setUserId(result.getUserId());
-
-                }
-            }
-        };
-        helper.login(token, listener);
-    }
+//    private void sendGoogleLoginToken(String token) {
+//        RestHelper helper = new RestHelperImpl();
+//        RestHelper.DataReceivedListener<AuthenticationResult> listener = new RestHelper.DataReceivedListener<AuthenticationResult>() {
+//            @Override
+//            public void onDataReceived(AuthenticationResult result) {
+//                if(result == null) {
+//                    Toast.makeText(MainActivity.this, "Login connection error", Toast.LENGTH_SHORT).show();
+//                    return;
+//                } else {
+//                    if(!result.isSuccess()) {
+//                        Toast.makeText(MainActivity.this, "Server error", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                    PreferencesController prefs = new PreferencesControllerImpl(MainActivity.this);
+//                    Log.d("bla", "token" + result.getSessionToken());
+//                    prefs.setSessionToken(result.getSessionToken());
+//                    prefs.setUserId(result.getUserId());
+//
+//                }
+//            }
+//        };
+//        helper.login(token, listener);
+//    }
 
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -307,6 +307,14 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+//        markEventsOnTheMap();
+//    }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
