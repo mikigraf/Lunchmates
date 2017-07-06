@@ -79,7 +79,12 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //go to the login screen again?
                 FirebaseAuth.getInstance().signOut();
+
                 Toast.makeText(SettingsActivity.this, "Du hast dich abgemeldet", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(SettingsActivity.this, MainActivity.class);
+                i.putExtra("loginAgain", 1);
+                SettingsActivity.this.startActivity(i);
+                SettingsActivity.this.finish();
             }
         });
 
@@ -98,15 +103,14 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 };
                 helper.userDelete(preferences.getUserId(), listener);
+                FirebaseAuth.getInstance().getCurrentUser().delete();
 
-                //go to the login screen again?
-                Toast.makeText(SettingsActivity.this, "Die App wird jetzt beendet, du musst dich wieder anmelden", Toast.LENGTH_SHORT).show();
-                SettingsActivity.super.onBackPressed();
-//                System.runFinalization();
-//                SettingsActivity.super.onDestroy();
-//                SettingsActivity.super.onStop();
-//                SettingsActivity.this.finishActivity();
-                ;
+                //go to the main screen again and show login window
+                Toast.makeText(SettingsActivity.this, "Dein Profil wurde gelöscht", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(SettingsActivity.this, MainActivity.class);
+                i.putExtra("loginAgain", 1);
+                SettingsActivity.this.startActivity(i);
+                SettingsActivity.this.finish();
             }
         });
 

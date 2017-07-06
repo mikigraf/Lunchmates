@@ -25,7 +25,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/text_event_name"
+                android:id="@+id/text_SE_event_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -37,10 +37,10 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/text_date"
+                android:id="@+id/text_SE_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/text_location"
+                android:layout_below="@+id/text_SE_location"
                 android:layout_marginLeft="25dp"
                 android:text="@string/show_event_text_date"
                 android:gravity="start"
@@ -48,10 +48,10 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/text_location"
+                android:id="@+id/text_SE_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/text_event_name"
+                android:layout_below="@+id/text_SE_event_name"
                 android:layout_marginLeft="25dp"
                 android:gravity="start"
                 android:text="@string/show_event_text_location"
@@ -59,10 +59,10 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/text_time"
+                android:id="@+id/text_SE_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/text_date"
+                android:layout_below="@+id/text_SE_date"
                 android:layout_marginLeft="25dp"
                 android:text="@string/show_event_text_time"
                 android:gravity="start"

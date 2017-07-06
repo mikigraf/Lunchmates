@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -48,12 +50,14 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import org.w3c.dom.Text;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import club.lunchmates.lunchmates.controller.PreferencesControllerImpl;
 import club.lunchmates.lunchmates.controller.interfaces.PreferencesController;
 import club.lunchmates.lunchmates.data.AuthenticationResult;
 import club.lunchmates.lunchmates.data.Event;
+import club.lunchmates.lunchmates.data.User;
 import club.lunchmates.lunchmates.rest.RestHelperImpl;
 import club.lunchmates.lunchmates.rest.interfaces.RestHelper;
 
@@ -71,16 +75,16 @@ public class MainActivity extends AppCompatActivity
     private LatLngBounds mapCameraBounds;
     private static final int DOUBLE_BACK_TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long msBackPressed = 0;
-
+    private static boolean isLogedIn = false;
+    HashMap<Marker, Integer> markerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final PreferencesController pref;
-        pref = new PreferencesControllerImpl(this);
-        TextView userName = (TextView) findViewById(R.id.userName);
-//        userName.setText(pref.getUserName());
+        if (getIntent().getIntExtra("loginAgain", 0) == 1) {
+            isLogedIn = false;
+        }
         mAuth = FirebaseAuth.getInstance();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -88,7 +92,6 @@ public class MainActivity extends AppCompatActivity
 
         //new RetrieveEventsTask(t).execute(getAbsoluteUrl("events"));
         RestHelper helper = new RestHelperImpl();
-
         RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
             @Override
             public void onDataReceived(List<Event> data) {
@@ -110,17 +113,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));    //CreateEventActivity.class));
-                MainActivity.this.finish();
-            }
-        });
-
-        //for testing only
-        FloatingActionButton fab_test = (FloatingActionButton) findViewById(R.id.fab_test);
-        fab_test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity.this.startActivity(new Intent(MainActivity.this, ShowEventActivity.class));
-                MainActivity.this.finish();
             }
         });
 
@@ -148,12 +140,17 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        //drawer.setDrawerListener(toggle);
+//        drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+//        if(!isLogedIn) {
         signIn();
+//            isLogedIn = true;
+//        }
+
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
@@ -182,49 +179,36 @@ public class MainActivity extends AppCompatActivity
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RESULT_CODE_LOGIN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if(result.isSuccess()) {
+
+            Toast.makeText(MainActivity.this, "RESULT_CODE_LOGIN: " + result.getStatus(), Toast.LENGTH_LONG).show();
+            initEventsNumbers();
+            //update user name and email in the navbar
+            TextView userName = (TextView) findViewById(R.id.userName);
+            TextView userEmail = (TextView) findViewById(R.id.userEmail);
+            userName.setText("Test");
+            userEmail.setText("Test");
+//            Toast.makeText(MainActivity.this, "User name> " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "Email> " + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+
+
+            if (result.isSuccess()) {
+                Toast.makeText(MainActivity.this, "RESULT_CODE_LOGIN_SUCCESS!", Toast.LENGTH_SHORT).show();
                 sendGoogleLoginToken(result.getSignInAccount().getIdToken());
-            }
-        }
-    }
+                isLogedIn = true;
 
-    private void sendGoogleLoginToken(String token) {
-        RestHelper helper = new RestHelperImpl();
-        RestHelper.DataReceivedListener<AuthenticationResult> listener = new RestHelper.DataReceivedListener<AuthenticationResult>() {
-            @Override
-            public void onDataReceived(AuthenticationResult result) {
-                if(result == null) {
-                    Toast.makeText(MainActivity.this, "Login connection error", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    if(!result.isSuccess()) {
-                        Toast.makeText(MainActivity.this, "Server error", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    PreferencesController prefs = new PreferencesControllerImpl(MainActivity.this);
-                    Log.d("bla", "token" + result.getSessionToken());
-                    prefs.setSessionToken(result.getSessionToken());
-                    prefs.setUserId(result.getUserId());
+                initEventsNumbers();
 
-                }
+                //update user name and email in the navbar
+//                TextView userName = (TextView) findViewById(R.id.userName);
+//                TextView userEmail = (TextView) findViewById(R.id.userEmail);
+//                userName.setText("Test");
+//                userEmail.setText("Test");
+//                drawer.requestLayout();
             }
         };
         helper.login(token, listener);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        RestHelper helper = new RestHelperImpl();
-        RestHelper.DataReceivedListener<Integer> listener = new RestHelper.DataReceivedListener<Integer>() {
-            @Override
-            public void onDataReceived(Integer data) {
-                nearbyNumber.setText(data);
-            }
-        };
-    }
-
-    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -270,7 +254,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_settings) {
-            item.setChecked(true);
             MainActivity.this.startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
 
@@ -282,38 +265,28 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent i = new Intent(MainActivity.this, ShowEventActivity.class);
-                i.putExtra("event_id", 123456);
+                if (markerId.containsKey(marker)) {
+                    i.putExtra("event_id", markerId.get(marker));
+                    i.putExtra("event_author", marker.getSnippet());
+                    i.putExtra("event_location", marker.getTitle());
+                    i.putExtra("event_Lat", marker.getPosition().latitude);
+                    i.putExtra("event_Lng", marker.getPosition().longitude);
+                }
                 MainActivity.this.startActivity(i);
-                MainActivity.this.finish();
-//               Toast.makeText(MainActivity.this, "Info Window clicked!", Toast.LENGTH_SHORT).show();
             }
         });
 
-//        mMap.getUiSettings().setCompassEnabled(true);
-//        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        markEventsOnTheMap();
 
-        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
-        LatLng foodFak = new LatLng(51.4935117f, 7.4161913f);
-
-        mMap.addMarker(new MarkerOptions()
-                .position(mensaTU)
-                .title("Hauptmensa TU Dortmund")
-                .snippet("Powereater93"));
-        mMap.addMarker(new MarkerOptions()
-                .position(foodFak)
-                .title("Food Fakultät")
-                .snippet("HerrDöner"));
-
-//        markEventsOnTheMap();
-//        mMap.setLatLngBoundsForCameraTarget(mapCameraBounds);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mensaTU, 15.0f));
-
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.
+                checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -326,47 +299,54 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void markEventsOnTheMap() {
-        RestHelper helper = new RestHelperImpl();
+        ////////DEBUG
+        markerId = new HashMap<>();
+        LatLng foodFak = new LatLng(51.4935117f, 7.4161913f);
+        Marker m = mMap.addMarker(new MarkerOptions()
+                .position(foodFak)
+                .title("Food Fakultät")
+                .snippet("HerrDöner"));
+        markerId.put(m, 123);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(foodFak, 15.0f));
 
+        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
+        m = mMap.addMarker(new MarkerOptions()
+                .position(mensaTU)
+                .title("Hauptmensa TU Dortmund")
+                .snippet("Powereater93"));
+        markerId.put(m, 124);
+        /////////
+
+        RestHelper helper = new RestHelperImpl();
         RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
             @Override
             public void onDataReceived(List<Event> data) {
                 if (data != null) {
+                    markerId = new HashMap<>();
+
                     LatLng eLocation = null;
                     for (Event e : data) {
                         eLocation = new LatLng(Float.parseFloat(e.getX()), Float.parseFloat(e.getY()));
-                        mMap.addMarker(new MarkerOptions().position(eLocation).title(e.getName())
-                                .snippet("Powereater93"));
+
+                        Marker m = mMap.addMarker(new MarkerOptions().position(eLocation).title(e.getName())
+                                .snippet(e.getAuthor() + "")); //TODO: get user name
+                        markerId.put(m, e.getId());
                     }
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eLocation, 15.0f));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eLocation, 10.0f));
                 }
-                findMapCameraBounds(data);
             }
         };
         helper.eventGetAll(listener);
     }
 
-    public LatLngBounds findMapCameraBounds(List<Event> eventData) {
-        LatLng eLocation = null;
-        LatLng mostLeftDown, mostRightUp;//, mostUp, mostDown;
-        float[] lat = new float[eventData.size()];
-        float[] lng = new float[eventData.size()];
-
-        for (int i = 0; i < eventData.size(); i++) {
-            lat[i] = Float.parseFloat(eventData.get(i).getX());
-            lng[i] = Float.parseFloat(eventData.get(i).getY());
-        }
-
-        Arrays.sort(lat);
-        Arrays.sort(lng);
-        mostLeftDown = new LatLng(lat[0], lng[0]);
-        mostRightUp = new LatLng(lat[lat.length-1], lng[lng.length-1]);
-
-        mapCameraBounds = new LatLngBounds(new LatLng(51.4930692f, 7.4139248f), new LatLng(51.4935117f, 7.4161913f));   //new LatLngBounds(mostLeftDown, mostRightUp);
-        return mapCameraBounds;
-    }
-
     public void initEventsNumbers() {
+        ////////DEBUG
+        nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
+        nearbyNumber.setText("23");
+        startingNumber = (TextView) findViewById(R.id.startingNumber);
+        startingNumber.setText("46");
+        ////////
+
         RestHelper helper = new RestHelperImpl();
         RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
             @Override
@@ -375,7 +355,6 @@ public class MainActivity extends AppCompatActivity
                     int counter = 0;
                     for (Event e : data) {
                         counter++;
-                        Log.i("MainActivity", "Event " + e.getName() + " " + e.getX() + " " + e.getY());
                     }
                     nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
                     nearbyNumber.setText(counter);
@@ -384,8 +363,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-//        helper.userGetEvents(preferences.getUserId(), listener);
-//        helper.
+        helper.eventGetAll(listener);
     }
 
     @Override

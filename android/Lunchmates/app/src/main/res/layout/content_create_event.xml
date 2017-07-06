@@ -82,7 +82,7 @@
             android:layout_weight="0.3">
 
             <EditText
-                android:id="@+id/text_location"
+                android:id="@+id/text_CE_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -109,7 +109,7 @@
             android:layout_weight="0.3">
 
             <TextView
-                android:id="@+id/text_time"
+                android:id="@+id/text_CE_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -133,7 +133,7 @@
             android:layout_weight="0.3">
 
             <TextView
-                android:id="@+id/text_date"
+                android:id="@+id/text_CE_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

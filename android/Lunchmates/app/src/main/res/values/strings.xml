@@ -33,9 +33,9 @@
     <!-- Show Event -->
     <string name="show_event_button_arrived">Ist angekommen</string>
     <string name="show_event_button_not_arrived">Nicht angekommen</string>
-    <string name="show_event_text_name">Dein Event mit Powereater93</string>
-    <string name="show_event_text_location">Treffpunkt:Eingangshalle Mensa Nord</string>
-    <string name="show_event_text_date">Datum:5.7.2017</string>
-    <string name="show_event_text_time">Uhrzeit:11:45</string>
+    <string name="show_event_text_name">Dein Event mit:</string>
+    <string name="show_event_text_location">Treffpunkt:</string>
+    <string name="show_event_text_date">Datum:</string>
+    <string name="show_event_text_time">Uhrzeit:</string>
 
 </resources>
