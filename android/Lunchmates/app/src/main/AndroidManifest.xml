@@ -21,9 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDCVWfMSpAutv7lVwJR1Bfcinw2rEu8YTE"/>
+        <!--<meta-data-->
+            <!--android:name="com.google.android.maps.v2.API_KEY"-->
+            <!--android:value="AIzaSyDCVWfMSpAutv7lVwJR1Bfcinw2rEu8YTE"/>-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAATzAd0ghNfvW8KpThPkJ4efhvMGB59HQ"/>

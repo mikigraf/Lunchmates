@@ -206,6 +206,30 @@ public class MainActivity extends AppCompatActivity
 //                drawer.requestLayout();
             }
         };
+       // helper.login(token, listener);
+    }
+
+    private void sendGoogleLoginToken(String token) {
+        RestHelper helper = new RestHelperImpl();
+        RestHelper.DataReceivedListener<AuthenticationResult> listener = new RestHelper.DataReceivedListener<AuthenticationResult>() {
+            @Override
+            public void onDataReceived(AuthenticationResult result) {
+                if(result == null) {
+                    Toast.makeText(MainActivity.this, "Login connection error", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    if(!result.isSuccess()) {
+                        Toast.makeText(MainActivity.this, "Server error", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    PreferencesController prefs = new PreferencesControllerImpl(MainActivity.this);
+                    Log.d("bla", "token" + result.getSessionToken());
+                    prefs.setSessionToken(result.getSessionToken());
+                    prefs.setUserId(result.getUserId());
+
+                }
+            }
+        };
         helper.login(token, listener);
     }
 
