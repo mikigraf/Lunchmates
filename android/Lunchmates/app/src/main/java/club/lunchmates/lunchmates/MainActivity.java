@@ -116,6 +116,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        FloatingActionButton refresh = (FloatingActionButton) findViewById(R.id.refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));
+                markEventsOnTheMap();
+            }
+        });
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -201,8 +211,8 @@ public class MainActivity extends AppCompatActivity
                 //update user name and email in the navbar
 //                TextView userName = (TextView) findViewById(R.id.userName);
 //                TextView userEmail = (TextView) findViewById(R.id.userEmail);
-//                userName.setText(mAuth.getCurrentUser().getDisplayName());
-//                userEmail.setText(mAuth.getCurrentUser().getEmail());
+                userName.setText(mAuth.getCurrentUser().getDisplayName());
+                userEmail.setText(mAuth.getCurrentUser().getEmail());
             }
         }
     }

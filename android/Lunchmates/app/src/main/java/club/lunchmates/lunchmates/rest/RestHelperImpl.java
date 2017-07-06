@@ -225,9 +225,12 @@ public class RestHelperImpl implements RestHelper {
         public void onResponse(Call<T> call, Response<T> response) {
             if(response.isSuccessful()) {
                 T data = response.body();
-                for (DataReceivedListener<T> listener : listeners) {
-                    listener.onDataReceived(data);
+                if(data != null){
+                    for (DataReceivedListener<T> listener : listeners) {
+                        listener.onDataReceived(data);
+                    }
                 }
+
             }
         }
 

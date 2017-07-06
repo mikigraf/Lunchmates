@@ -108,6 +108,24 @@
                         android:textSize="50sp"
                         android:textStyle="bold" />
 
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/startingNumber"
+                        android:layout_centerHorizontal="true"
+                        android:clickable="true"
+                        android:src="@drawable/ic_add_black_24dp"
+                        android:tint="@android:color/white"
+                        app:backgroundTint="@android:color/holo_orange_light"
+                        app:elevation="5dp"
+                        app:fabSize="normal"
+                        app:layout_anchor="@id/viewTop"
+                        app:layout_anchorGravity="bottom|center"
+                        app:rippleColor="@android:color/white"
+                        tools:layout_editor_absoluteX="0dp"
+                        tools:layout_editor_absoluteY="0dp" />
+
                 </RelativeLayout>
             </LinearLayout>
 
@@ -129,6 +147,7 @@
             app:rippleColor="@android:color/white"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="0dp" />
+
 
         <!--<android.support.design.widget.FloatingActionButton-->
             <!--android:id="@+id/fab_test"-->
