@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity
     private TextView nearbyNumber;
     private TextView startingNumber;
     private GoogleMap mMap;
-    private FirebaseAuth mAuth;
     private LatLngBounds mapCameraBounds;
     private static final int DOUBLE_BACK_TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long msBackPressed = 0;
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity
         if (getIntent().getIntExtra("loginAgain", 0) == 1) {
             isLogedIn = false;
         }
-        mAuth = FirebaseAuth.getInstance();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -212,8 +210,8 @@ public class MainActivity extends AppCompatActivity
 
                 TextView userN = (TextView) findViewById(R.id.userName);
                 TextView userE = (TextView) findViewById(R.id.userEmail);
-                userN.setText(mAuth.getCurrentUser().getDisplayName());
-                userE.setText(mAuth.getCurrentUser().getEmail());
+                userN.setText(result.getSignInAccount().getDisplayName());
+                userE.setText(result.getSignInAccount().getEmail());
             }
         }
     }
@@ -391,7 +389,7 @@ public class MainActivity extends AppCompatActivity
 
                     LatLng eLocation = new LatLng(51.4930692f, 7.4139248f);
                     for (Event e : data) {
-                        eLocation = new LatLng(Float.parseFloat(e.getX()), Float.parseFloat(e.getY()));
+                        eLocation = new LatLng(Double.parseDouble(e.getX()), Double.parseDouble(e.getY()));
 
                         Marker m = mMap.addMarker(new MarkerOptions().position(eLocation).title(e.getName())
                                 .snippet(e.getAuthor() + "")); //TODO: get user name
@@ -405,13 +403,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void initEventsNumbers() {
-        ////////DEBUG
-        nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
-        nearbyNumber.setText("23");
-        startingNumber = (TextView) findViewById(R.id.startingNumber);
-        startingNumber.setText("46");
-        ////////
-
         RestHelper helper = new RestHelperImpl();
         RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
             @Override
@@ -423,12 +414,19 @@ public class MainActivity extends AppCompatActivity
                     }
                     nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
                     nearbyNumber.setText(String.valueOf(counter));
-                    startingNumber = (TextView) findViewById(R.id.startingNumber);
-                    startingNumber.setText(String.valueOf(counter));
                 }
             }
         };
         helper.eventGetAll(listener);
+
+        RestHelper helper2 = new RestHelperImpl();
+        RestHelper.DataReceivedListener<Integer> listener2 = new RestHelper.DataReceivedListener<Integer>() {
+            @Override
+            public void onDataReceived(Integer data) {
+                startingNumber = (TextView) findViewById(R.id.startingNumber);
+                startingNumber.setText(String.valueOf(data));
+            }
+        };
     }
 
     @Override

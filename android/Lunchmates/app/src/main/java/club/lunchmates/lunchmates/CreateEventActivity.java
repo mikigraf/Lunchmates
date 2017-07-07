@@ -19,10 +19,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-//import com.google.android.gms.location.places.PlaceReport; // "Place" is not resolved
-//import com.google.android.gms.location.places.ui.PlacePicker; // "ui" is not resolved
-//import com.google.android.gms.maps.model.LatLng;
-
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -130,14 +126,14 @@ public class CreateEventActivity extends AppCompatActivity {
 
         //date must be in future too
         if (inputY < currY) return false;
-        if ((inputM+1 < currM) && (inputY == currY)) return false;
+        if ((inputM < currM) && (inputY == currY)) return false;
         if ((inputD < currD) && (inputM == currM) && (inputY == currY)) return false;
 
         return true;
     }
 
     boolean isToday() {
-        return inputY == currY && inputM+1 == currM && inputD == currD;
+        return inputY == currY && inputM == currM && inputD == currD;
     }
 
     void initCalendar() {
@@ -145,7 +141,7 @@ public class CreateEventActivity extends AppCompatActivity {
         currHour = calendar.get(Calendar.HOUR_OF_DAY);
         currMin = calendar.get(Calendar.MINUTE);
         currY = calendar.get(Calendar.YEAR);
-        currM = calendar.get(Calendar.MONTH) + 1; //Calender.MONTH: return value starts at 0!
+        currM = calendar.get(Calendar.MONTH);
         currD = calendar.get(Calendar.DAY_OF_MONTH);
     }
 
@@ -287,10 +283,10 @@ public class CreateEventActivity extends AppCompatActivity {
                 calendar = Calendar.getInstance(Locale.GERMANY);
                 Calendar calenderInput = Calendar.getInstance();
                 currY = calendar.get(Calendar.YEAR);
-                currM = calendar.get(Calendar.MONTH) + 1; //Calender.MONTH: return value starts at 0!
+                currM = calendar.get(Calendar.MONTH); 
                 currD = calendar.get(Calendar.DAY_OF_MONTH);
                 inputY = eventDatePicker.getYear();
-                inputM = eventDatePicker.getMonth(); //.getMonth(): return value starts at 0!
+                inputM = eventDatePicker.getMonth();
                 inputD = eventDatePicker.getDayOfMonth();
                 calenderInput.set(inputY, inputM, inputD);
 
@@ -338,7 +334,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 eventDate.set(inputY, inputM, inputD, inputHour, inputMin, 0);
                 PreferencesController currPrefs = new PreferencesControllerImpl(CreateEventActivity.this);
                 Date d = new Date();
-                d.setTime(eventDate.getTimeInMillis());
+                d = eventDate.getTime();
 
                 helper.eventAdd(pickedPlace.getName().toString(),
                         String.valueOf(pickedPlace.getLatLng().latitude),

@@ -24,6 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -102,11 +104,11 @@ public class ShowEventActivity extends AppCompatActivity
         ///////DEBUG
         Toast.makeText(ShowEventActivity.this, " Event ID: " + currEventId, Toast.LENGTH_SHORT).show();
 
-        dateView.append(" " + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "." +
-                (Calendar.getInstance().get(Calendar.MONTH) + 1) + "." +
-                Calendar.getInstance().get(Calendar.YEAR));
-        timeView.append(" " + Calendar.getInstance().get(Calendar.HOUR) + ":" +
-                Calendar.getInstance().get(Calendar.MINUTE));
+//        dateView.append(" " + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "." +
+//                (Calendar.getInstance().get(Calendar.MONTH) + 1) + "." +
+//                Calendar.getInstance().get(Calendar.YEAR));
+//        timeView.append(" " + Calendar.getInstance().get(Calendar.HOUR) + ":" +
+//                Calendar.getInstance().get(Calendar.MINUTE));
         //////
 
         RestHelper helper = new RestHelperImpl();
@@ -121,8 +123,13 @@ public class ShowEventActivity extends AppCompatActivity
                             TextView dateView = (TextView) findViewById(R.id.text_SE_date);
                             TextView timeView = (TextView) findViewById(R.id.text_SE_time);
 
-                            dateView.append(currEventDate.toString());
-                            timeView.append(currEventDate.toString());
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+                            String dateS = dateFormat.format(currEventDate);
+                            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+                            String timeS = timeFormat.format(currEventDate);
+                            dateView.append(dateS);
+                            timeView.append(timeS);
+
                         }
                     }
                 }
