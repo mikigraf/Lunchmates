@@ -23,7 +23,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestHelperImpl implements RestHelper {
-    private static final String API_BASE_URL = "http://172.22.210.106:9999/";
+    private static final String API_BASE_URL = "http://lunchmates.club:9999/";
     private static final String TAG = "RestHelperImpl";
 
     private LunchmatesClient getClient() {
@@ -225,9 +225,12 @@ public class RestHelperImpl implements RestHelper {
         public void onResponse(Call<T> call, Response<T> response) {
             if(response.isSuccessful()) {
                 T data = response.body();
-                for (DataReceivedListener<T> listener : listeners) {
-                    listener.onDataReceived(data);
+                if(data != null){
+                    for (DataReceivedListener<T> listener : listeners) {
+                        listener.onDataReceived(data);
+                    }
                 }
+
             }
         }
 

@@ -20,6 +20,6 @@ public class LunchmatesInstanceIDService extends FirebaseInstanceIdService {
 
         RestHelper restHelper = new RestHelperImpl();
         // TODO: Pass the correct user id
-        //restHelper.userUpdateToken(1, refreshedToken, null);
+        restHelper.userUpdateToken(1, refreshedToken, null);
     }
 }

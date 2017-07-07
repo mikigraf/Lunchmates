@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity
                 initEventsNumbers();
 
                 //update user name and email in the navbar
+
                 TextView userN = (TextView) findViewById(R.id.userName);
                 TextView userE = (TextView) findViewById(R.id.userEmail);
                 userN.setText(mAuth.getCurrentUser().getDisplayName());
