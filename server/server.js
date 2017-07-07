@@ -50,7 +50,7 @@ app.put('/event/add/:name/:x/:y/:time/:author', function (req, res) {
     var name = req.params.name;
     var x = req.params.x;
     var y = req.params.y;
-    var time = new Date(req.params.time * 1000);
+    var time = new Date(req.params.time);
     var author = req.params.author;
 
     var callback = function (err, data) {
