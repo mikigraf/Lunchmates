@@ -334,7 +334,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 eventDate.set(inputY, inputM, inputD, inputHour, inputMin, 0);
                 PreferencesController currPrefs = new PreferencesControllerImpl(CreateEventActivity.this);
                 Date d = new Date();
-                d.setTime(eventDate.getTimeInMillis());
+                d = eventDate.getTime();
 
                 helper.eventAdd(pickedPlace.getName().toString(),
                         String.valueOf(pickedPlace.getLatLng().latitude),

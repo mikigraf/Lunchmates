@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity
 
                     LatLng eLocation = new LatLng(51.4930692f, 7.4139248f);
                     for (Event e : data) {
-                        eLocation = new LatLng(Float.parseFloat(e.getX()), Float.parseFloat(e.getY()));
+                        eLocation = new LatLng(Double.parseDouble(e.getX()), Double.parseDouble(e.getY()));
 
                         Marker m = mMap.addMarker(new MarkerOptions().position(eLocation).title(e.getName())
                                 .snippet(e.getAuthor() + "")); //TODO: get user name
@@ -403,13 +403,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void initEventsNumbers() {
-        ////////DEBUG
-        nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
-        nearbyNumber.setText("23");
-        startingNumber = (TextView) findViewById(R.id.startingNumber);
-        startingNumber.setText("46");
-        ////////
-
         RestHelper helper = new RestHelperImpl();
         RestHelper.DataReceivedListener<List<Event>> listener = new RestHelper.DataReceivedListener<List<Event>>() {
             @Override
@@ -421,12 +414,19 @@ public class MainActivity extends AppCompatActivity
                     }
                     nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
                     nearbyNumber.setText(String.valueOf(counter));
-                    startingNumber = (TextView) findViewById(R.id.startingNumber);
-                    startingNumber.setText(String.valueOf(counter));
                 }
             }
         };
         helper.eventGetAll(listener);
+
+        RestHelper helper2 = new RestHelperImpl();
+        RestHelper.DataReceivedListener<Integer> listener2 = new RestHelper.DataReceivedListener<Integer>() {
+            @Override
+            public void onDataReceived(Integer data) {
+                startingNumber = (TextView) findViewById(R.id.startingNumber);
+                startingNumber.setText(String.valueOf(data));
+            }
+        };
     }
 
     @Override
