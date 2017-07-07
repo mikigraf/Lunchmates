@@ -191,12 +191,12 @@ public class MainActivity extends AppCompatActivity
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 			///////DEBUG
             Toast.makeText(MainActivity.this, "RESULT_CODE_LOGIN: " + result.getStatus(), Toast.LENGTH_LONG).show();
-            initEventsNumbers();
+//            initEventsNumbers();
             //update user name and email in the navbar
-            TextView userName = (TextView) findViewById(R.id.userName);
-            TextView userEmail = (TextView) findViewById(R.id.userEmail);
-            userName.setText("Test");
-            userEmail.setText("Test");
+//            TextView userName = (TextView) findViewById(R.id.userName);
+//            TextView userEmail = (TextView) findViewById(R.id.userEmail);
+//            userName.setText("Test");
+//            userEmail.setText("Test");
 //            Toast.makeText(MainActivity.this, "User name> " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
 //            Toast.makeText(MainActivity.this, "Email> " + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 			/////////
@@ -209,10 +209,11 @@ public class MainActivity extends AppCompatActivity
                 initEventsNumbers();
 
                 //update user name and email in the navbar
-//                TextView userName = (TextView) findViewById(R.id.userName);
-//                TextView userEmail = (TextView) findViewById(R.id.userEmail);
-//                userName.setText(mAuth.getCurrentUser().getDisplayName());
-//                userEmail.setText(mAuth.getCurrentUser().getEmail());
+
+                TextView userN = (TextView) findViewById(R.id.userName);
+                TextView userE = (TextView) findViewById(R.id.userEmail);
+                userN.setText(mAuth.getCurrentUser().getDisplayName());
+                userE.setText(mAuth.getCurrentUser().getEmail());
             }
         }
     }
