@@ -66,7 +66,7 @@ import static android.R.attr.widgetCategory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
-    private static final String BASE_URL = "http://10.0.2.2:9999/";
+    private static final String BASE_URL = "http://172.22.210.106:9999/";
     private static final int RESULT_CODE_LOGIN = 815;
     private TextView nearbyNumber;
     private TextView startingNumber;
@@ -115,6 +115,16 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));
             }
         });
+
+        FloatingActionButton refresh = (FloatingActionButton) findViewById(R.id.refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                MainActivity.this.startActivity(new Intent(MainActivity.this, CreateEventActivity.class));
+                markEventsOnTheMap();
+            }
+        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -179,14 +189,14 @@ public class MainActivity extends AppCompatActivity
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RESULT_CODE_LOGIN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-/			///////DEBUG
+			///////DEBUG
             Toast.makeText(MainActivity.this, "RESULT_CODE_LOGIN: " + result.getStatus(), Toast.LENGTH_LONG).show();
-            initEventsNumbers();
+//            initEventsNumbers();
             //update user name and email in the navbar
-            TextView userName = (TextView) findViewById(R.id.userName);
-            TextView userEmail = (TextView) findViewById(R.id.userEmail);
-            userName.setText("Test");
-            userEmail.setText("Test");
+//            TextView userName = (TextView) findViewById(R.id.userName);
+//            TextView userEmail = (TextView) findViewById(R.id.userEmail);
+//            userName.setText("Test");
+//            userEmail.setText("Test");
 //            Toast.makeText(MainActivity.this, "User name> " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
 //            Toast.makeText(MainActivity.this, "Email> " + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 			/////////
@@ -199,10 +209,10 @@ public class MainActivity extends AppCompatActivity
                 initEventsNumbers();
 
                 //update user name and email in the navbar
-//                TextView userName = (TextView) findViewById(R.id.userName);
-//                TextView userEmail = (TextView) findViewById(R.id.userEmail);
-//                userName.setText(mAuth.getCurrentUser().getDisplayName(););
-//                userEmail.setText(mAuth.getCurrentUser().getEmail());
+                TextView userN = (TextView) findViewById(R.id.userName);
+                TextView userE = (TextView) findViewById(R.id.userEmail);
+                userN.setText(mAuth.getCurrentUser().getDisplayName());
+                userE.setText(mAuth.getCurrentUser().getEmail());
             }
         }
     }
@@ -228,8 +238,32 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-        helper.login(token, listener);
+       helper.login(token, listener);
     }
+
+//    private void sendGoogleLoginToken(String token) {
+//        RestHelper helper = new RestHelperImpl();
+//        RestHelper.DataReceivedListener<AuthenticationResult> listener = new RestHelper.DataReceivedListener<AuthenticationResult>() {
+//            @Override
+//            public void onDataReceived(AuthenticationResult result) {
+//                if(result == null) {
+//                    Toast.makeText(MainActivity.this, "Login connection error", Toast.LENGTH_SHORT).show();
+//                    return;
+//                } else {
+//                    if(!result.isSuccess()) {
+//                        Toast.makeText(MainActivity.this, "Server error", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                    PreferencesController prefs = new PreferencesControllerImpl(MainActivity.this);
+//                    Log.d("bla", "token" + result.getSessionToken());
+//                    prefs.setSessionToken(result.getSessionToken());
+//                    prefs.setUserId(result.getUserId());
+//
+//                }
+//            }
+//        };
+//        helper.login(token, listener);
+//    }
 
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -284,6 +318,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+//        markEventsOnTheMap();
+//    }
+
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -324,19 +366,19 @@ public class MainActivity extends AppCompatActivity
         ////////DEBUG
         markerId = new HashMap<>();
         LatLng foodFak = new LatLng(51.4935117f, 7.4161913f);
-        Marker m = mMap.addMarker(new MarkerOptions()
-                .position(foodFak)
-                .title("Food Fakultät")
-                .snippet("HerrDöner"));
-        markerId.put(m, 123);
+//        Marker m = mMap.addMarker(new MarkerOptions()
+//                .position(foodFak)
+//                .title("Food Fakultät")
+//                .snippet("HerrDöner"));
+//        markerId.put(m, 123);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(foodFak, 15.0f));
-
-        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
-        m = mMap.addMarker(new MarkerOptions()
-                .position(mensaTU)
-                .title("Hauptmensa TU Dortmund")
-                .snippet("Powereater93"));
-        markerId.put(m, 124);
+//
+//        LatLng mensaTU = new LatLng(51.4930692f, 7.4139248f);
+//        m = mMap.addMarker(new MarkerOptions()
+//                .position(mensaTU)
+//                .title("Hauptmensa TU Dortmund")
+//                .snippet("Powereater93"));
+//        markerId.put(m, 124);
         /////////
 
         RestHelper helper = new RestHelperImpl();
@@ -346,7 +388,7 @@ public class MainActivity extends AppCompatActivity
                 if (data != null) {
                     markerId = new HashMap<>();
 
-                    LatLng eLocation = null;
+                    LatLng eLocation = new LatLng(51.4930692f, 7.4139248f);
                     for (Event e : data) {
                         eLocation = new LatLng(Float.parseFloat(e.getX()), Float.parseFloat(e.getY()));
 
@@ -379,9 +421,9 @@ public class MainActivity extends AppCompatActivity
                         counter++;
                     }
                     nearbyNumber = (TextView) findViewById(R.id.nearbyNumber);
-                    nearbyNumber.setText(counter);
+                    nearbyNumber.setText(String.valueOf(counter));
                     startingNumber = (TextView) findViewById(R.id.startingNumber);
-                    startingNumber.setText(counter);
+                    startingNumber.setText(String.valueOf(counter));
                 }
             }
         };
