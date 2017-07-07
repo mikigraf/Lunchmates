@@ -62,7 +62,7 @@ exports.eventAdd = function (name, x, y, time, author, callback) {
 };
 
 exports.eventGetAll = function (callback) {
-    con.query("SELECT * FROM Events LEFT JOIN Users u ON author = u.id WHERE date > now();", function (err, result) {
+    con.query("SELECT * FROM Events WHERE date > now();", function (err, result) {
         callback(err, result);
     });
 };
