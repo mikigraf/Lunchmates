@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity
     private TextView nearbyNumber;
     private TextView startingNumber;
     private GoogleMap mMap;
-    private FirebaseAuth mAuth;
     private LatLngBounds mapCameraBounds;
     private static final int DOUBLE_BACK_TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long msBackPressed = 0;
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity
         if (getIntent().getIntExtra("loginAgain", 0) == 1) {
             isLogedIn = false;
         }
-        mAuth = FirebaseAuth.getInstance();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -212,8 +210,8 @@ public class MainActivity extends AppCompatActivity
 
                 TextView userN = (TextView) findViewById(R.id.userName);
                 TextView userE = (TextView) findViewById(R.id.userEmail);
-                userN.setText(mAuth.getCurrentUser().getDisplayName());
-                userE.setText(mAuth.getCurrentUser().getEmail());
+                userN.setText(result.getSignInAccount().getDisplayName());
+                userE.setText(result.getSignInAccount().getEmail());
             }
         }
     }
