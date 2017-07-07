@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -49,8 +50,8 @@ public class CreateEventActivity extends AppCompatActivity {
     private Calendar calendar;
     private Button btnCreateEvent, btnTimeOK, btnDateOK;
     private int currHour, currMin;
-    private int inputHour = 0;
-    private int inputMin = 0;
+    private int inputHour = -1;
+    private int inputMin = -1;
     private int currY, currM, currD;
     private int inputY = 0;
     private int inputM = 0;
@@ -68,11 +69,10 @@ public class CreateEventActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //TODO show place picker instead of textEdit for event location, i started following this tutorial http://www.truiton.com/2015/04/using-new-google-places-api-android/
-
         btnCreateEvent = (Button) findViewById(R.id.button_create_event);
         btnCreateEvent.setEnabled(false);
 
+        initCalendar();
         initDatePicker();
         initTimePicker();
 
@@ -112,19 +112,10 @@ public class CreateEventActivity extends AppCompatActivity {
                 .show();
     }
 
-//    boolean checkLocation() {
-//        if (location.length() < 2) {
-//            btnCreateEvent.setEnabled(false);
-//            return false;
-//        } else {
-//            return true;
-//        }
-//    }
-
     boolean checkTime() {
 //        if((inputHour < currHour) && isToday()) return false;
 //        if((inputHour == currHour) && (inputMin < currHour) && isToday()) return false;
-        if (inputHour == 0) {
+        if (inputHour == -1) {
             btnCreateEvent.setEnabled(false);
             return false;
         }
@@ -139,15 +130,23 @@ public class CreateEventActivity extends AppCompatActivity {
 
         //date must be in future too
         if (inputY < currY) return false;
-        if ((inputM < currM) && (inputY == currY)) return false;
+        if ((inputM+1 < currM) && (inputY == currY)) return false;
         if ((inputD < currD) && (inputM == currM) && (inputY == currY)) return false;
 
-        btnCreateEvent.setEnabled(true);
         return true;
     }
 
     boolean isToday() {
-        return inputY == currY && inputM == currM && inputD == currD;
+        return inputY == currY && inputM+1 == currM && inputD == currD;
+    }
+
+    void initCalendar() {
+        calendar = Calendar.getInstance();
+        currHour = calendar.get(Calendar.HOUR_OF_DAY);
+        currMin = calendar.get(Calendar.MINUTE);
+        currY = calendar.get(Calendar.YEAR);
+        currM = calendar.get(Calendar.MONTH) + 1; //Calender.MONTH: return value starts at 0!
+        currD = calendar.get(Calendar.DAY_OF_MONTH);
     }
 
     void initTimePicker() {
@@ -202,6 +201,13 @@ public class CreateEventActivity extends AppCompatActivity {
             TextView locationEdit = (TextView) findViewById(R.id.text_CE_location);
             locationEdit.setText(name + ", " + address/* + ", " + attributions*/);
             pickedPlace = place;
+
+            if (locationOK && checkTime() && checkDate()) {
+                btnCreateEvent.setEnabled(true);
+            } else {
+                btnCreateEvent.setEnabled(false);
+            }
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -240,6 +246,7 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calendar = Calendar.getInstance();
+                Calendar calendarInput = Calendar.getInstance();
                 currHour = calendar.get(Calendar.HOUR_OF_DAY);
                 currMin = calendar.get(Calendar.MINUTE);
                 if (Build.VERSION.SDK_INT < 23) {
@@ -250,18 +257,25 @@ public class CreateEventActivity extends AppCompatActivity {
                     inputMin = eventTimePicker.getMinute();
                 }
 
+                calendarInput.set(Calendar.HOUR_OF_DAY, inputHour);
+                calendarInput.set(Calendar.MINUTE, inputMin);
+
                 final TextView timeEdit = (TextView) findViewById(R.id.text_CE_time);
-                timeEdit.setText(inputHour + ":" + inputMin);
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                String t = sdf.format(calendarInput.getTime());
+                timeEdit.setText(t);//inputHour + ":" + inputMin);
                 RelativeLayout rl = (RelativeLayout) findViewById(R.id.event_time_picker_layout);
                 rl.setVisibility(View.GONE);
                 TableLayout tl = (TableLayout) findViewById(R.id.event_inputs_view);
                 tl.setVisibility(View.VISIBLE);
 
-                if (!checkTime()) {
-                    Toast.makeText(CreateEventActivity.this, "Bitte die Uhrzeit prüfen!", Toast.LENGTH_SHORT).show();
-                }
+//                if (!checkTime()) {
+//                    Toast.makeText(CreateEventActivity.this, "Bitte die Uhrzeit prüfen!", Toast.LENGTH_SHORT).show();
+//                }
                 if (locationOK && checkTime() && checkDate()) {
                     btnCreateEvent.setEnabled(true);
+                } else {
+                    btnCreateEvent.setEnabled(false);
                 }
             }
         });
@@ -271,25 +285,31 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calendar = Calendar.getInstance(Locale.GERMANY);
+                Calendar calenderInput = Calendar.getInstance();
                 currY = calendar.get(Calendar.YEAR);
                 currM = calendar.get(Calendar.MONTH) + 1; //Calender.MONTH: return value starts at 0!
                 currD = calendar.get(Calendar.DAY_OF_MONTH);
                 inputY = eventDatePicker.getYear();
-                inputM = eventDatePicker.getMonth() + 1; //.getMonth(): return value starts at 0!
+                inputM = eventDatePicker.getMonth(); //.getMonth(): return value starts at 0!
                 inputD = eventDatePicker.getDayOfMonth();
+                calenderInput.set(inputY, inputM, inputD);
 
                 final TextView dateEdit = (TextView) findViewById(R.id.text_CE_date);
-                dateEdit.setText(inputD + "." + inputM + "." + inputY);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+                String t = sdf.format(calenderInput.getTime());
+                dateEdit.setText(t);//inputD + "." + inputM + "." + inputY);
                 RelativeLayout rl = (RelativeLayout) findViewById(R.id.event_date_picker_layout);
                 rl.setVisibility(View.GONE);
                 TableLayout tl = (TableLayout) findViewById(R.id.event_inputs_view);
                 tl.setVisibility(View.VISIBLE);
 
-                if (!checkDate()) {
-                    Toast.makeText(CreateEventActivity.this, "Bitte das Datum prüfen!", Toast.LENGTH_SHORT).show();
-                }
+//                if (!checkDate()) {
+//                    Toast.makeText(CreateEventActivity.this, "Bitte das Datum prüfen!", Toast.LENGTH_SHORT).show();
+//                }
                 if (locationOK && checkTime() && checkDate()) {
                     btnCreateEvent.setEnabled(true);
+                } else {
+                    btnCreateEvent.setEnabled(false);
                 }
                 if (isToday()) {
                     Toast.makeText(CreateEventActivity.this, "Das Event findet heute statt!", Toast.LENGTH_SHORT).show();
@@ -315,10 +335,11 @@ public class CreateEventActivity extends AppCompatActivity {
                     }
                 };
                 Calendar eventDate = Calendar.getInstance();
-                eventDate.set(inputY, inputM, inputD, inputHour, inputMin);
+                eventDate.set(inputY, inputM, inputD, inputHour, inputMin, 0);
                 PreferencesController currPrefs = new PreferencesControllerImpl(CreateEventActivity.this);
                 Date d = new Date();
                 d.setTime(eventDate.getTimeInMillis());
+
                 helper.eventAdd(pickedPlace.getName().toString(),
                         String.valueOf(pickedPlace.getLatLng().latitude),
                         String.valueOf(pickedPlace.getLatLng().longitude),
